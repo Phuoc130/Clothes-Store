@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>New Season Arrivals</h1>
+        <p>Check out all the new trends</p>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-danger btn-lg">SHOP NOW</a>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<div class="container mt-5">
+    <section class="featured-products">
+        <h2 class="text-center">Featured Products</h2>
+        <div class="row">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var p in Model)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="card product-card h-100">
+                            <img src="https://via.placeholder.com/350x350.png?text=@p.Type" class="card-img-top" alt="@p.Type">
+                            <div class="card-body">
+                                <h5 class="card-title">@p.Type</h5>
+                                <p class="card-text">@(p.Stock > 0 ? "In Stock" : "Out of Stock")</p>
+                                <a href="#" class="btn btn-primary">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center">No featured products to display.</p>
+            }
+        </div>
+    </section>
+</div>
+
