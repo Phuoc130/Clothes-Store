@@ -1,0 +1,78 @@
+@model ProductStore.Views.ViewModels.ProductDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Product.Name;
+
+    var gallery = Model.GalleryImages.Any()
+        ? Model.GalleryImages
+        : ["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"];
+
+    var selectedSizes = Model.Product.GetSizes().Any()
+        ? Model.Product.GetSizes()
+        : new[] { "S", "M", "L" };
+}
+
+<section class="container section-space">
+    <div class="product-detail-layout reveal-on-scroll">
+        <div class="detail-gallery">
+            <div class="detail-main-image-wrap">
+                <img id="detailMainImage" class="detail-main-image" src="@gallery[0]" alt="@Model.Product.Name" loading="lazy" />
+            </div>
+            <div class="detail-thumb-grid">
+                @foreach (var image in gallery)
+                {
+                    <button type="button" class="detail-thumb" data-image="@image">
+                        <img src="@image" alt="Thumbnail" loading="lazy" />
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="detail-info">
+            <h2>@Model.Product.Name</h2>
+            <p class="detail-price">@Model.Product.PriceDisplay</p>
+
+            <div class="detail-size-select">
+                <p>Size</p>
+                <div>
+                    @foreach (var size in selectedSizes)
+                    {
+                        <button type="button" class="size-chip">@size</button>
+                    }
+                </div>
+            </div>
+
+            <p class="detail-description">@Model.Product.Description</p>
+
+            <div class="admin-actions">
+                <button type="button" class="btn-minimal">Add to cart</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container section-space reveal-on-scroll">
+    <div class="section-header split">
+        <h2>You may also like</h2>
+        <a asp-action="Shop" class="text-link">Back to Shop</a>
+    </div>
+    <div class="featured-grid">
+        @foreach (var item in Model.RelatedProducts)
+        {
+            var frontImage = string.IsNullOrWhiteSpace(item.ImageUrl)
+                ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                : item.ImageUrl;
+
+            <article class="product-item">
+                <a asp-action="Details" asp-route-id="@item.Product_ID" class="product-image-wrap">
+                    <img class="product-front" src="@frontImage" alt="@item.Name" loading="lazy" />
+                </a>
+                <div class="product-meta">
+                    <h3>@item.Name</h3>
+                    <p>@item.PriceDisplay</p>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+

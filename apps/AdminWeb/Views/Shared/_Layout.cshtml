@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProductStore</title>
+    <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AdminWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav container">
+            <a class="brand-logo" asp-area="" asp-controller="Home" asp-action="Index">CLOTHES STORE</a>
+
+            <ul class="nav-center">
+                <li><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                <li><a asp-controller="Product" asp-action="Admin">Products</a></li>
+                <li><a href="https://localhost:7232">User Site</a></li>
+            </ul>
+
+            <div class="nav-right">
+                <a asp-controller="Dashboard" asp-action="Index" aria-label="Dashboard"><i class="fas fa-chart-line"></i></a>
+                <a asp-controller="Product" asp-action="Create" aria-label="Create"><i class="fas fa-plus"></i></a>
+                <a asp-controller="Product" asp-action="Admin" aria-label="Account"><i class="far fa-user"></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="page-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <p class="footer-brand">CLOTHES STORE</p>
+            </div>
+            <div class="footer-links">
+                <a asp-controller="Home" asp-action="Index">About</a>
+                <a asp-controller="Home" asp-action="Privacy">Contact</a>
+                <a asp-controller="Home" asp-action="Privacy">Policy</a>
+            </div>
+            <div class="footer-links">
+                <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                <a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+            </div>
+        </div>
+        <div class="container footer-copy">
+            <span>&copy; @DateTime.Now.Year Clothes Store</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+

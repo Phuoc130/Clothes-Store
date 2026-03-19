@@ -1,0 +1,165 @@
+@model UserWeb.Views.ViewModels.ProductShopViewModel
+
+@{
+    ViewData["Title"] = "Shop";
+}
+
+<section class="container section-space">
+    <div class="shop-layout">
+        <aside class="shop-filter-panel reveal-on-scroll">
+            <form asp-action="Shop" method="get" class="shop-filter-form">
+                <div class="filter-block">
+                    <h3>Search Name</h3>
+                    <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="e.g. Linen Shirt" />
+                </div>
+
+                <div class="filter-block">
+                    <h3>Category</h3>
+                    @foreach (var item in Model.Categories)
+                    {
+                        <label class="filter-check">
+                            <input type="radio" name="category" value="@item" checked="@(Model.Category == item)" />
+                            <span>@item</span>
+                        </label>
+                    }
+                    <label class="filter-check">
+                        <input type="radio" name="category" value="" checked="@(string.IsNullOrWhiteSpace(Model.Category))" />
+                        <span>All</span>
+                    </label>
+                </div>
+
+                <div class="filter-block">
+                    <h3>Size</h3>
+                    @foreach (var item in Model.Sizes)
+                    {
+                        <label class="filter-check">
+                            <input type="radio" name="size" value="@item" checked="@(Model.Size == item)" />
+                            <span>@item</span>
+                        </label>
+                    }
+                    <label class="filter-check">
+                        <input type="radio" name="size" value="" checked="@(string.IsNullOrWhiteSpace(Model.Size))" />
+                        <span>All</span>
+                    </label>
+                </div>
+
+                <div class="filter-block">
+                    <h3>Price</h3>
+                    <label>Min</label>
+                    <input type="range" name="minPrice" min="0" max="3000000" step="50000" value="@(Model.MinPrice ?? 0)" />
+                    <label>Max</label>
+                    <input type="range" name="maxPrice" min="0" max="3000000" step="50000" value="@(Model.MaxPrice ?? 3000000)" />
+                </div>
+
+                <div class="filter-block">
+                    <h3>Color</h3>
+                    <div class="color-dots">
+                        @foreach (var color in Model.Colors)
+                        {
+                            <label class="color-dot-wrap" title="@color">
+                                <input type="radio" name="color" value="@color" checked="@(Model.Color == color)" />
+                                <span class="color-dot" style="background-color:@color"></span>
+                            </label>
+                        }
+                        <label class="color-dot-wrap" title="All">
+                            <input type="radio" name="color" value="" checked="@(string.IsNullOrWhiteSpace(Model.Color))" />
+                            <span class="color-dot color-dot-empty"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <h3>Sort</h3>
+                    <select name="sort" class="form-control">
+                        <option value="newest" selected="@(Model.Sort == "newest")">Newest</option>
+                        <option value="price-asc" selected="@(Model.Sort == "price-asc")">Price low to high</option>
+                        <option value="price-desc" selected="@(Model.Sort == "price-desc")">Price high to low</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="load" value="8" />
+                <button type="submit" class="btn-minimal w-100">Apply</button>
+            </form>
+        </aside>
+
+        <div class="shop-grid-side reveal-on-scroll">
+            <div class="shop-grid-header">
+                <h2>Products</h2>
+                <span>@Model.TotalCount items</span>
+            </div>
+
+            <div class="shop-grid" id="shopGrid">
+                @foreach (var p in Model.Products)
+                {
+                    var front = string.IsNullOrWhiteSpace(p.ImageUrl)
+                        ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                        : p.ImageUrl;
+                    var back = string.IsNullOrWhiteSpace(p.HoverImageUrl) ? front : p.HoverImageUrl;
+                    var gallery = string.Join('|', p.GetImageGallery());
+                    var sizes = p.GetSizes().Any() ? string.Join(',', p.GetSizes()) : "S,M,L";
+
+                    <article class="shop-card">
+                        <a asp-action="Details" asp-route-id="@p.Product_ID" class="shop-card-image">
+                            <img loading="lazy" class="product-front" src="@front" alt="@p.Name" />
+                            <img loading="lazy" class="product-hover" src="@back" alt="@p.Name alternate" />
+                        </a>
+                        <div class="shop-card-actions">
+                            <button class="btn-minimal" type="button">Add to cart</button>
+                            <button class="btn-minimal quick-view-btn"
+                                    type="button"
+                                    data-name="@p.Name"
+                                    data-price="@p.PriceDisplay"
+                                    data-image="@front"
+                                    data-images="@gallery"
+                                    data-sizes="@sizes"
+                                    data-description="@p.Description">
+                                Quick view
+                            </button>
+                        </div>
+                        <div class="product-meta">
+                            <h3>@p.Name</h3>
+                            <p>@p.PriceDisplay</p>
+                        </div>
+                    </article>
+                }
+            </div>
+
+            @if (Model.HasMore)
+            {
+                <div class="shop-load-more-wrap">
+                    <a class="btn-minimal"
+                       asp-action="Shop"
+                              asp-route-search="@Model.Search"
+                       asp-route-category="@Model.Category"
+                       asp-route-size="@Model.Size"
+                       asp-route-color="@Model.Color"
+                       asp-route-minPrice="@Model.MinPrice"
+                       asp-route-maxPrice="@Model.MaxPrice"
+                       asp-route-sort="@Model.Sort"
+                       asp-route-load="@(Model.LoadCount + 8)">
+                        Load more
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="quick-view-modal" id="quickViewModal" aria-hidden="true">
+    <div class="quick-view-dialog">
+        <button class="quick-view-close" id="quickViewClose" type="button">&times;</button>
+        <div class="quick-view-content">
+            <img id="quickViewImage" src="" alt="Quick view image" />
+            <div class="quick-view-info">
+                <h3 id="quickViewName"></h3>
+                <p id="quickViewPrice"></p>
+                <p id="quickViewDescription"></p>
+                <label for="quickViewSize">Size</label>
+                <select id="quickViewSize" class="form-control"></select>
+                <button type="button" class="btn-minimal">Add to cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

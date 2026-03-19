@@ -1,0 +1,82 @@
+@model AdminWeb.Views.ViewModels.ProductAdminListViewModel
+
+@{
+    ViewData["Title"] = "Admin Products";
+}
+
+<section class="container section-space admin-shell">
+    <aside class="admin-sidebar reveal-on-scroll">
+        <p class="admin-brand">ADMIN</p>
+        <a asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        <a asp-action="Admin" class="active">Products</a>
+        <a asp-controller="Dashboard" asp-action="Index">Orders</a>
+        <a asp-controller="Dashboard" asp-action="Index">Users</a>
+    </aside>
+
+    <div class="admin-main reveal-on-scroll">
+        <div class="admin-header">
+            <h2>Products</h2>
+            <a asp-action="Create" class="btn-minimal">Add Product</a>
+        </div>
+
+        <form asp-action="Admin" method="get" class="admin-filter-row">
+            <input type="text" name="search" value="@Model.Search" placeholder="Search by name" class="form-control" />
+
+            <select name="category" class="form-control">
+                <option value="">All categories</option>
+                @foreach (var item in Model.Categories)
+                {
+                    <option value="@item" selected="@(Model.Category == item)">@item</option>
+                }
+            </select>
+
+            <select name="stockFilter" class="form-control">
+                <option value="">Stock status</option>
+                <option value="in" selected="@(Model.StockFilter == "in")">In stock</option>
+                <option value="out" selected="@(Model.StockFilter == "out")">Out of stock</option>
+            </select>
+
+            <button type="submit" class="btn-minimal">Filter</button>
+        </form>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Products)
+                    {
+                        var image = string.IsNullOrWhiteSpace(p.ImageUrl)
+                            ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                            : p.ImageUrl;
+
+                        <tr>
+                            <td><img class="admin-thumb" src="@image" alt="@p.Name" loading="lazy" /></td>
+                            <td>@p.Name</td>
+                            <td>@p.PriceDisplay</td>
+                            <td>@p.Stock</td>
+                            <td>@p.Category</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@p.Product_ID">Edit</a> |
+                                <a asp-action="Delete" asp-route-id="@p.Product_ID">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3" page-model="@Model.PagingInfo" page-action="Admin"></div>
+    </div>
+</section>
+
+
+

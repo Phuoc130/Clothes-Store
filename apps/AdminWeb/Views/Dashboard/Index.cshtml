@@ -1,0 +1,126 @@
+@model AdminWeb.Views.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="container section-space admin-shell">
+    <aside class="admin-sidebar reveal-on-scroll">
+        <p class="admin-brand">ADMIN</p>
+        <a asp-controller="Dashboard" asp-action="Index" class="active">Dashboard</a>
+        <a asp-controller="Product" asp-action="Admin">Products</a>
+    </aside>
+
+    <div class="admin-main reveal-on-scroll">
+        <div class="admin-header">
+            <h2>Dashboard</h2>
+            <a asp-controller="Product" asp-action="Create" class="btn-minimal">Add Product</a>
+        </div>
+
+        <div class="dashboard-cards">
+            <article class="dashboard-card">
+                <p>Total Revenue</p>
+                <h3>@Model.TotalRevenue.ToString("N0") VND</h3>
+            </article>
+            <article class="dashboard-card">
+                <p>Total Orders</p>
+                <h3>@Model.OrderCount</h3>
+            </article>
+            <article class="dashboard-card">
+                <p>Total Users</p>
+                <h3>@Model.UserCount</h3>
+            </article>
+        </div>
+
+        <div class="dashboard-grid mt-4">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Top Products</th>
+                            <th>Views</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.TopViewedProducts.Any())
+                        {
+                            foreach (var p in Model.TopViewedProducts)
+                            {
+                                <tr>
+                                    <td>@p.Name</td>
+                                    <td>@p.Views</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="2">No data</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentUsers.Any())
+                        {
+                            foreach (var u in Model.RecentUsers)
+                            {
+                                <tr>
+                                    <td>@u.Email</td>
+                                    <td>@string.Join(", ", u.Roles)</td>
+                                    <td>@(u.IsLocked ? "Locked" : "Active")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="3">No users</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-table-wrap mt-4">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentOrders.Any())
+                    {
+                        foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@o.ShopOrderId</td>
+                                <td>@o.UserId</td>
+                                <td>@o.TotalAmount.ToString("N0") VND</td>
+                                <td>@o.Status</td>
+                                <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5">No orders</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+

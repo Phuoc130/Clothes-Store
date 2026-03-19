@@ -1,0 +1,24 @@
+@model AdminWeb.Models.Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<section class="container section-space">
+    <div class="admin-form">
+        <h2>Delete Product</h2>
+        <p>Are you sure you want to delete this product?</p>
+
+        <p><strong>@Model.Name</strong> - @Model.Price.ToString("N0") VND</p>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Product_ID" />
+            <div class="admin-actions">
+                <button type="submit" class="btn-minimal">Delete</button>
+                <a asp-action="Admin" class="btn-minimal">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+

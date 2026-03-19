@@ -1,0 +1,47 @@
+@model ProductStore.Views.ViewModels.ProductListViewModel
+
+@{
+    ViewData["Title"] = "Product Management";
+}
+
+<section class="container section-space">
+    <div class="admin-header">
+        <h2>Product Management</h2>
+        <a asp-action="Create" class="btn-minimal">Create Product</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Products)
+                {
+                    <tr>
+                        <td>@p.Name</td>
+                        <td>@(string.IsNullOrWhiteSpace(p.Category) ? "Collection" : p.Category)</td>
+                        <td>@p.Price.ToString("N0") VND</td>
+                        <td>@p.Stock</td>
+                        <td>@(p.Availability ? "Available" : "Unavailable")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@p.Product_ID">Details</a> |
+                            <a asp-action="Edit" asp-route-id="@p.Product_ID">Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@p.Product_ID">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3" page-model="@Model.PagingInfo" page-action="Index"></div>
+</section>
+
