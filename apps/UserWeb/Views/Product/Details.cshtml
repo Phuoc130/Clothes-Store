@@ -34,18 +34,36 @@
 
             <div class="detail-size-select">
                 <p>Size</p>
-                <div>
+                <div id="detailSizePicker">
                     @foreach (var size in selectedSizes)
                     {
-                        <button type="button" class="size-chip">@size</button>
+                        <button type="button" class="size-chip" data-size="@size">@size</button>
                     }
                 </div>
             </div>
 
             <p class="detail-description">@Model.Product.Description</p>
 
+            <div class="detail-qty-row">
+                <label for="detailQty">Số lượng</label>
+                <div class="qty-selector">
+                    <button type="button" class="qty-btn" id="qtyMinus">−</button>
+                    <input type="number" id="detailQty" value="1" min="1" max="99" class="qty-input" />
+                    <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                </div>
+            </div>
+
             <div class="admin-actions">
-                <button type="button" class="btn-minimal">Add to cart</button>
+                <button type="button"
+                        class="btn-minimal btn-add-cart detail-cart-btn"
+                        data-product-id="@Model.Product.Product_ID">
+                    <i class="fas fa-shopping-bag"></i> Thêm vào giỏ hàng
+                </button>
+                <button type="button"
+                        class="btn-wishlist-detail btn-add-wishlist"
+                        data-product-id="@Model.Product.Product_ID">
+                    <i class="far fa-heart"></i> Yêu thích
+                </button>
             </div>
         </div>
     </div>
@@ -63,10 +81,16 @@
                 ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
                 : item.ImageUrl;
 
-            <article class="product-item">
+            <article class="product-item" style="position:relative;">
                 <a asp-action="Details" asp-route-id="@item.Product_ID" class="product-image-wrap">
                     <img class="product-front" src="@frontImage" alt="@item.Name" loading="lazy" />
                 </a>
+                <button class="btn-wishlist-overlay btn-add-wishlist"
+                        type="button"
+                        data-product-id="@item.Product_ID"
+                        title="Thêm vào yêu thích">
+                    <i class="far fa-heart"></i>
+                </button>
                 <div class="product-meta">
                     <h3>@item.Name</h3>
                     <p>@item.PriceDisplay</p>
@@ -76,4 +100,63 @@
     </div>
 </section>
 
+@section Scripts {
+<script>
+    (function () {
+        var qtyInput = document.getElementById('detailQty');
+        var minusBtn = document.getElementById('qtyMinus');
+        var plusBtn = document.getElementById('qtyPlus');
 
+        if (minusBtn) minusBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var v = parseInt(qtyInput.value) || 1;
+            qtyInput.value = Math.max(1, v - 1);
+        });
+
+        if (plusBtn) plusBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var v = parseInt(qtyInput.value) || 1;
+            qtyInput.value = Math.min(99, v + 1);
+        });
+
+        // Detail page Add to Cart — uses .detail-cart-btn class
+        var detailCartBtn = document.querySelector('.detail-cart-btn');
+        if (detailCartBtn) {
+            detailCartBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var productId = detailCartBtn.dataset.productId;
+                var qty = parseInt(qtyInput.value) || 1;
+
+                // Get selected size from picker
+                var activeSize = document.querySelector('#detailSizePicker .size-chip.active');
+                var size = activeSize ? (activeSize.dataset.size || activeSize.textContent.trim()) : null;
+
+                console.log('[Detail] Cart click: productId=' + productId + ' qty=' + qty + ' size=' + size);
+
+                if (!size) {
+                    if (window.showToast) {
+                        window.showToast('Vui lòng chọn size trước khi thêm vào giỏ', 'warning');
+                    } else {
+                        alert('Vui lòng chọn size trước');
+                    }
+                    return;
+                }
+
+                if (window.addToCart) {
+                    window.addToCart(productId, qty, size, detailCartBtn);
+                } else {
+                    console.error('[Detail] window.addToCart not found');
+                }
+            });
+            console.log('[Detail] Cart button handler attached');
+        }
+
+        // Detail page Wishlist is handled by the global delegation in site.js
+        // because it has class .btn-add-wishlist
+
+        console.log('[Detail] Script initialized');
+    })();
+</script>
+}

@@ -47,7 +47,12 @@ namespace ProductStore.Controllers.Api
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(p => p.Name.Contains(search));
+                var keyword = search.Trim();
+                var escaped = keyword.Replace("%", "\\%").Replace("_", "\\_");
+                var pattern = $"%{escaped}%";
+
+                query = query.Where(p =>
+                    p.Name != null && EF.Functions.Like(p.Name, pattern));
             }
 
             if (!string.IsNullOrWhiteSpace(category))
@@ -130,6 +135,41 @@ namespace ProductStore.Controllers.Api
                 LoadCount = Math.Max(load, 8),
                 TotalCount = totalCount,
                 HasMore = Math.Max(load, 8) < totalCount
+            });
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? keyword, [FromQuery] int limit = 20, [FromQuery] int offset = 0)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return BadRequest(new { error = "keyword is required" });
+            }
+
+            var trimmed = keyword.Trim();
+            var escaped = trimmed.Replace("%", "\\%").Replace("_", "\\_");
+            var pattern = $"%{escaped}%";
+
+            var baseQuery = _context.Products
+                .AsNoTracking()
+                .Where(p => p.Availability)
+                .Where(p => p.Name != null && EF.Functions.Like(p.Name, pattern));
+
+            var total = await baseQuery.CountAsync();
+
+            var products = await baseQuery
+                .OrderByDescending(p => p.Product_ID)
+                .Skip(Math.Max(0, offset))
+                .Take(Math.Clamp(limit, 1, 100))
+                .ToListAsync();
+
+            return Ok(new
+            {
+                Query = trimmed,
+                Total = total,
+                Offset = Math.Max(0, offset),
+                Limit = Math.Clamp(limit, 1, 100),
+                Items = products
             });
         }
 

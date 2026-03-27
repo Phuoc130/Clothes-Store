@@ -13,6 +13,7 @@
         }
 
         <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" name="returnUrl" value="@returnUrl" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

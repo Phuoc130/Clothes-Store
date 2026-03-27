@@ -3,7 +3,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient("BackendApi", client =>
 {
-    var baseUrl = builder.Configuration["BackendApi:BaseUrl"] ?? "https://localhost:7189/";
+    var baseUrl = builder.Configuration["BackendApi:BaseUrl"] ?? "http://localhost:5181/";
     client.BaseAddress = new Uri(baseUrl);
 });
 

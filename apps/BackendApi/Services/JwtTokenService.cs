@@ -19,7 +19,7 @@ namespace ProductStore.Services
         {
             var issuer = _configuration["Jwt:Issuer"] ?? "ProductStore";
             var audience = _configuration["Jwt:Audience"] ?? "ProductStore.Client";
-            var key = _configuration["Jwt:Key"] ?? "CHANGE_ME_TO_A_LONG_SECURE_KEY_1234567890";
+            var key = _configuration["Jwt:Key"] ?? "CHANGE_ME_TO_A_LONG_SECURE_KEY_1234567890_ABCDEF";
 
             var claims = new List<Claim>
             {

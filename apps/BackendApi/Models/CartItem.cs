@@ -16,9 +16,11 @@ namespace ProductStore.Models
         [Range(1, 99)]
         public int Quantity { get; set; } = 1;
 
+        [StringLength(20)]
+        public string? SelectedSize { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Product? Product { get; set; }
     }
 }
-

@@ -15,8 +15,9 @@
 </head>
 <body>
     @{
+        var authToken = Context.Request.Cookies["auth_token"];
         var authEmail = Context.Request.Cookies["auth_email"];
-        var isAuthenticated = !string.IsNullOrWhiteSpace(authEmail);
+        var isAuthenticated = !string.IsNullOrWhiteSpace(authToken);
     }
     <header class="site-header">
         <nav class="main-nav container">
@@ -41,13 +42,22 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
-                <a asp-controller="Product" asp-action="Shop" aria-label="Cart"><i class="fas fa-shopping-bag"></i></a>
+                <a asp-controller="Product" asp-action="Wishlist" aria-label="Wishlist" class="nav-icon-link" id="navWishlistLink">
+                    <i class="far fa-heart"></i>
+                    <span class="nav-badge" id="wishlistBadge"></span>
+                </a>
+                <a asp-controller="Product" asp-action="Cart" aria-label="Cart" class="nav-icon-link" id="navCartLink">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="nav-badge" id="cartBadge"></span>
+                </a>
                 <details class="account-menu">
                     <summary aria-label="Account"><i class="far fa-user"></i></summary>
                     <div class="account-dropdown">
                         @if (isAuthenticated)
                         {
                             <p class="account-email">@authEmail</p>
+                            <a asp-controller="Product" asp-action="Cart" class="account-link">Giỏ hàng</a>
+                            <a asp-controller="Product" asp-action="Wishlist" class="account-link">Yêu thích</a>
                             <form asp-controller="Account" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="account-link">Logout</button>
@@ -89,11 +99,11 @@
         </div>
     </footer>
 
+    <div id="toast-container" class="toast-container"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-

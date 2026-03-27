@@ -41,7 +41,7 @@ public class AccountController : Controller
             return View();
         }
 
-        var payload = await response.Content.ReadFromJsonAsync<AuthPayload>(new JsonSerializerOptions
+        var payload = await response.Content.ReadFromJsonAsync<     AuthPayload>(new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
@@ -57,8 +57,10 @@ public class AccountController : Controller
         {
             HttpOnly = true,
             IsEssential = true,
-            Secure = true,
-            Expires = DateTimeOffset.UtcNow.AddDays(7)
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(7),
+            Path = "/"
         };
 
         Response.Cookies.Append("auth_token", payload.Token, cookieOptions);
@@ -101,12 +103,41 @@ public class AccountController : Controller
         if (!response.IsSuccessStatusCode)
         {
             var errorText = await response.Content.ReadAsStringAsync();
+            System.Console.WriteLine($"[Register] Backend returned {response.StatusCode}: {errorText}");
             ModelState.AddModelError(string.Empty, string.IsNullOrWhiteSpace(errorText) ? "Register failed." : errorText);
             return View();
         }
 
-        TempData["Success"] = "Register successful. Please login.";
-        return RedirectToAction(nameof(Login));
+        var payload = await response.Content.ReadFromJsonAsync<AuthPayload>(new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        System.Console.WriteLine($"[Register] Payload: Token={(payload?.Token?.Substring(0, 20) ?? "NULL")}..., Email={payload?.Email}");
+
+        if (payload == null || string.IsNullOrWhiteSpace(payload.Token))
+        {
+            System.Console.WriteLine("[Register] Token is null/empty!");
+            ModelState.AddModelError(string.Empty, "Register succeeded but failed to retrieve token. Please login manually.");
+            return View();
+        }
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            IsEssential = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(7),
+            Path = "/"
+        };
+
+        Response.Cookies.Append("auth_token", payload.Token, cookieOptions);
+        System.Console.WriteLine("[Register] Cookie 'auth_token' set!");
+        Response.Cookies.Append("auth_email", payload.Email ?? email, cookieOptions);
+        Response.Cookies.Append("auth_role", payload.Role ?? "User", cookieOptions);
+
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
@@ -119,7 +150,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
-    private sealed class AuthPayload
+    public class AuthPayload
     {
         public string Token { get; set; } = string.Empty;
         public string Role { get; set; } = "User";

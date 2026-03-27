@@ -49,7 +49,16 @@ namespace ProductStore.Controllers.Api
             }
 
             await _userManager.AddToRoleAsync(user, "User");
-            return Ok(new { message = "Register successful" });
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = _jwtTokenService.CreateToken(user, roles);
+
+            return Ok(new AuthResponse
+            {
+                Token = token,
+                Role = roles.FirstOrDefault() ?? "User",
+                Email = user.Email ?? string.Empty
+            });
         }
 
         [HttpPost("login")]

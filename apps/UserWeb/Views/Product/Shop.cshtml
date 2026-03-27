@@ -10,7 +10,12 @@
             <form asp-action="Shop" method="get" class="shop-filter-form">
                 <div class="filter-block">
                     <h3>Search Name</h3>
-                    <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="e.g. Linen Shirt" />
+                    <input id="jsAjaxSearchInput" type="text" name="search" value="@Model.Search" class="form-control" placeholder="e.g. Linen Shirt" />
+                    <div class="search-controls" style="margin-top: 0.5rem; display:flex; gap:0.5rem;">
+                        <button id="jsAjaxSearchBtn" type="button" class="btn-minimal">Search</button>
+                        <button id="jsAjaxClearBtn" type="button" class="btn-minimal">Clear</button>
+                    </div>
+                    <p id="jsAjaxSearchFeedback" class="search-feedback" style="margin-top: 0.5rem; color:#d00;"></p>
                 </div>
 
                 <div class="filter-block">
@@ -97,28 +102,48 @@
                     var back = string.IsNullOrWhiteSpace(p.HoverImageUrl) ? front : p.HoverImageUrl;
                     var gallery = string.Join('|', p.GetImageGallery());
                     var sizes = p.GetSizes().Any() ? string.Join(',', p.GetSizes()) : "S,M,L";
+                    var sizeList = sizes.Split(',');
 
-                    <article class="shop-card">
+                    <article class="shop-card" data-product-id="@p.Product_ID">
                         <a asp-action="Details" asp-route-id="@p.Product_ID" class="shop-card-image">
                             <img loading="lazy" class="product-front" src="@front" alt="@p.Name" />
                             <img loading="lazy" class="product-hover" src="@back" alt="@p.Name alternate" />
+                            <div class="shop-card-actions">
+                                <button class="btn-minimal quick-view-btn"
+                                        type="button"
+                                        data-name="@p.Name"
+                                        data-price="@p.PriceDisplay"
+                                        data-image="@front"
+                                        data-images="@gallery"
+                                        data-sizes="@sizes"
+                                        data-description="@p.Description"
+                                        data-product-id="@p.Product_ID">
+                                    <i class="far fa-eye"></i> Quick view
+                                </button>
+                            </div>
                         </a>
-                        <div class="shop-card-actions">
-                            <button class="btn-minimal" type="button">Add to cart</button>
-                            <button class="btn-minimal quick-view-btn"
+                        <button class="btn-wishlist-overlay btn-add-wishlist"
+                                type="button"
+                                data-product-id="@p.Product_ID"
+                                title="Thêm vào yêu thích">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="shop-card-body">
+                            <div class="product-meta">
+                                <h3>@p.Name</h3>
+                                <p>@p.PriceDisplay</p>
+                            </div>
+                            <div class="shop-card-size-row">
+                                @foreach (var s in sizeList)
+                                {
+                                    <button type="button" class="size-chip-mini" data-size="@s.Trim()">@s.Trim()</button>
+                                }
+                            </div>
+                            <button class="btn-minimal btn-add-cart shop-card-cart-btn"
                                     type="button"
-                                    data-name="@p.Name"
-                                    data-price="@p.PriceDisplay"
-                                    data-image="@front"
-                                    data-images="@gallery"
-                                    data-sizes="@sizes"
-                                    data-description="@p.Description">
-                                Quick view
+                                    data-product-id="@p.Product_ID">
+                                <i class="fas fa-shopping-bag"></i> Thêm vào giỏ
                             </button>
-                        </div>
-                        <div class="product-meta">
-                            <h3>@p.Name</h3>
-                            <p>@p.PriceDisplay</p>
                         </div>
                     </article>
                 }
@@ -145,6 +170,104 @@
     </div>
 </section>
 
+<div class="ajax-search-feedback" style="margin: 0.5rem 0;"></div>
+
+<script>
+    (function () {
+        var searchInput = document.getElementById('jsAjaxSearchInput');
+        var searchBtn = document.getElementById('jsAjaxSearchBtn');
+        var clearBtn = document.getElementById('jsAjaxClearBtn');
+        var feedback = document.getElementById('jsAjaxSearchFeedback');
+        var shopGrid = document.getElementById('shopGrid');
+
+        function buildCard(product) {
+            var front = product.imageUrl || 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop';
+            var back = product.hoverImageUrl || front;
+            var price = (product.discountPercent && product.discountPercent > 0)
+                ? (Math.round(product.price * (1 - product.discountPercent / 100))).toLocaleString('en-US') + ' VND'
+                : product.price.toLocaleString('en-US') + ' VND';
+            var description = product.description || '';
+            var sizesStr = product.sizesCsv || 'S,M,L';
+            var sizeArr = sizesStr.split(',');
+            var sizeChips = sizeArr.map(function (s) {
+                return '<button type="button" class="size-chip-mini" data-size="' + s.trim() + '">' + s.trim() + '</button>';
+            }).join('');
+
+            return '<article class="shop-card" data-product-id="' + product.product_ID + '">' +
+                '<a href="/Product/Details/' + product.product_ID + '" class="shop-card-image">' +
+                '<img loading="lazy" class="product-front" src="' + front + '" alt="' + product.name + '" />' +
+                '<img loading="lazy" class="product-hover" src="' + back + '" alt="' + product.name + ' alternate" />' +
+                '</a>' +
+                '<button class="btn-wishlist-overlay btn-add-wishlist" type="button" data-product-id="' + product.product_ID + '" title="Thêm vào yêu thích">' +
+                '<i class="far fa-heart"></i></button>' +
+                '<div class="shop-card-body">' +
+                '<div class="product-meta"><h3>' + product.name + '</h3><p>' + price + '</p></div>' +
+                '<div class="shop-card-size-row">' + sizeChips + '</div>' +
+                '<button class="btn-minimal btn-add-cart shop-card-cart-btn" type="button" data-product-id="' + product.product_ID + '">' +
+                '<i class="fas fa-shopping-bag"></i> Thêm vào giỏ</button>' +
+                '</div>' +
+                '<div class="shop-card-actions">' +
+                '<button class="btn-minimal quick-view-btn" type="button" data-name="' + product.name + '" ' +
+                'data-price="' + price + '" data-image="' + front + '" data-images="' + (product.imageUrl || '') + '" ' +
+                'data-sizes="' + sizesStr + '" data-description="' + description + '" data-product-id="' + product.product_ID + '">' +
+                '<i class="far fa-eye"></i> Quick view</button>' +
+                '</div></article>';
+        }
+
+        function doSearch(keyword) {
+            if (!keyword || !keyword.trim()) {
+                feedback.textContent = 'Vui lòng nhập keyword trước khi tìm kiếm.';
+                feedback.style.color = '#c00';
+                return;
+            }
+
+            var normalized = keyword.trim();
+            feedback.textContent = 'Đang tìm kiếm "' + normalized + '" ...';
+            feedback.style.color = '#000';
+
+            var url = '/Product/SearchAjax?keyword=' + encodeURIComponent(normalized) + '&limit=48';
+            fetch(url, { headers: { 'Accept': 'application/json' } })
+                .then(function (resp) {
+                    if (!resp.ok) {
+                        return resp.json().catch(function () { return {}; }).then(function (err) {
+                            feedback.textContent = err.error || 'Lỗi khi gọi API.';
+                            feedback.style.color = '#c00';
+                        });
+                    }
+                    return resp.json().then(function (data) {
+                        var results = data.items || [];
+                        if (results.length === 0) {
+                            shopGrid.innerHTML = '<div class="no-results">Không tìm thấy sản phẩm nào.</div>';
+                            feedback.textContent = 'Không tìm thấy sản phẩm cho "' + normalized + '".';
+                            feedback.style.color = '#444';
+                            return;
+                        }
+                        shopGrid.innerHTML = results.map(buildCard).join('');
+                        feedback.textContent = 'Tìm thấy ' + data.total + ' sản phẩm cho "' + normalized + '".';
+                        feedback.style.color = '#006400';
+                    });
+                })
+                .catch(function () {
+                    feedback.textContent = 'Không thể kết nối đến API.';
+                    feedback.style.color = '#c00';
+                });
+        }
+
+        if (searchBtn) searchBtn.addEventListener('click', function () { doSearch(searchInput.value); });
+        if (clearBtn) clearBtn.addEventListener('click', function () {
+            if (searchInput) searchInput.value = '';
+            if (feedback) feedback.textContent = '';
+            window.location.href = '/Product/Shop';
+        });
+        if (searchInput) searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                doSearch(searchInput.value);
+            }
+        });
+    })();
+</script>
+
 <div class="quick-view-modal" id="quickViewModal" aria-hidden="true">
     <div class="quick-view-dialog">
         <button class="quick-view-close" id="quickViewClose" type="button">&times;</button>
@@ -156,10 +279,15 @@
                 <p id="quickViewDescription"></p>
                 <label for="quickViewSize">Size</label>
                 <select id="quickViewSize" class="form-control"></select>
-                <button type="button" class="btn-minimal">Add to cart</button>
+                <div class="quick-view-actions">
+                    <button type="button" class="btn-minimal btn-add-cart" id="quickViewAddCart" data-product-id="">
+                        <i class="fas fa-shopping-bag"></i> Thêm vào giỏ
+                    </button>
+                    <button type="button" class="btn-wishlist-qv btn-add-wishlist" id="quickViewAddWishlist" data-product-id="">
+                        <i class="far fa-heart"></i> Yêu thích
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-

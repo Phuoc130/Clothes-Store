@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Yêu thích";
+}
+
+<section class="container section-space">
+    <div class="wishlist-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>Sản phẩm yêu thích</h2>
+            <a asp-action="Shop" class="text-link">Tiếp tục mua sắm</a>
+        </div>
+
+        <div id="wishlistLoading" class="page-loading">
+            <i class="fas fa-spinner fa-spin"></i> Đang tải...
+        </div>
+
+        <div id="wishlistEmpty" class="empty-state" style="display:none;">
+            <i class="far fa-heart empty-icon"></i>
+            <p>Chưa có sản phẩm yêu thích</p>
+            <a asp-action="Shop" class="btn-minimal">Khám phá sản phẩm</a>
+        </div>
+
+        <div id="wishlistContent" class="wishlist-grid" style="display:none;"></div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        const wishlistLoading = document.getElementById('wishlistLoading');
+        const wishlistEmpty = document.getElementById('wishlistEmpty');
+        const wishlistContent = document.getElementById('wishlistContent');
+
+        async function loadWishlist() {
+            try {
+                const resp = await fetch('/Product/GetWishlistItems');
+                const data = await resp.json();
+
+                wishlistLoading.style.display = 'none';
+
+                if (data.requireLogin) {
+                    wishlistEmpty.style.display = 'flex';
+                    wishlistEmpty.querySelector('p').textContent = 'Vui lòng đăng nhập để xem yêu thích';
+                    return;
+                }
+
+                const items = Array.isArray(data) ? data : (data.items || []);
+
+                if (items.length === 0) {
+                    wishlistEmpty.style.display = 'flex';
+                    return;
+                }
+
+                wishlistContent.style.display = 'grid';
+                renderWishlist(items);
+            } catch (e) {
+                wishlistLoading.style.display = 'none';
+                wishlistEmpty.style.display = 'flex';
+                wishlistEmpty.querySelector('p').textContent = 'Không thể tải danh sách yêu thích';
+            }
+        }
+
+        function renderWishlist(items) {
+            wishlistContent.innerHTML = items.map(item => {
+                const img = item.imageUrl || 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=400&auto=format&fit=crop';
+                return `
+                    <article class="wishlist-card" data-product-id="${item.productId}">
+                        <a href="/Product/Details/${item.productId}" class="wishlist-card-image">
+                            <img src="${img}" alt="${item.productName}" loading="lazy" />
+                        </a>
+                        <button class="btn-remove-wishlist" data-product-id="${item.productId}" title="Xóa khỏi yêu thích">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="wishlist-card-info">
+                            <h3>${item.productName}</h3>
+                            <p>${item.price.toLocaleString('en-US')} VND</p>
+                            <div class="wishlist-card-actions">
+                                <button type="button" class="btn-minimal btn-add-cart" data-product-id="${item.productId}">
+                                    <i class="fas fa-shopping-bag"></i> Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </article>`;
+            }).join('');
+        }
+
+        // Event delegation
+        wishlistContent?.addEventListener('click', async (e) => {
+            if (e.target.closest('.btn-remove-wishlist')) {
+                const btn = e.target.closest('.btn-remove-wishlist');
+                const productId = btn.dataset.productId;
+                try {
+                    const resp = await fetch(`/Product/RemoveFromWishlist?productId=${productId}`, { method: 'POST' });
+                    const data = await resp.json();
+                    if (data.success) {
+                        if (window.showToast) window.showToast('Đã xóa khỏi yêu thích', 'success');
+                        if (window.updateBadges) window.updateBadges();
+                        loadWishlist();
+                    }
+                } catch (err) {
+                    if (window.showToast) window.showToast('Lỗi khi xóa', 'error');
+                }
+            }
+        });
+
+        loadWishlist();
+    })();
+</script>
+}
