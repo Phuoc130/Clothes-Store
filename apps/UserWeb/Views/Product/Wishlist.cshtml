@@ -1,0 +1,128 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["Wishlist"];
+}
+
+<section class="container section-space">
+    <div class="wishlist-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>@L["WishlistItems"]</h2>
+            <a asp-action="Shop" class="text-link">@L["ContinueShopping"]</a>
+        </div>
+
+        <div id="wishlistLoading" class="skeleton-stack">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="shop-grid shop-grid-loading">
+                <article class="shop-skeleton-card"><div class="shop-skeleton-image"></div><div class="shop-skeleton-line"></div><div class="shop-skeleton-line short"></div></article>
+                <article class="shop-skeleton-card"><div class="shop-skeleton-image"></div><div class="shop-skeleton-line"></div><div class="shop-skeleton-line short"></div></article>
+                <article class="shop-skeleton-card"><div class="shop-skeleton-image"></div><div class="shop-skeleton-line"></div><div class="shop-skeleton-line short"></div></article>
+                <article class="shop-skeleton-card"><div class="shop-skeleton-image"></div><div class="shop-skeleton-line"></div><div class="shop-skeleton-line short"></div></article>
+            </div>
+        </div>
+
+        <div id="wishlistEmpty" class="empty-state" style="display:none;">
+            <i class="far fa-heart empty-icon"></i>
+            <p>@L["NoWishlistItemsYet"]</p>
+            <a asp-action="Shop" class="btn-minimal">@L["ExploreProducts"]</a>
+        </div>
+
+        <div id="wishlistContent" class="wishlist-grid" style="display:none;"></div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var t = {
+            signInToViewWishlist: '@L["SignInToViewWishlist"]',
+            unableToLoadWishlist: '@L["UnableToLoadWishlist"]',
+            removeFromWishlist: '@L["RemoveFromWishlist"]',
+            addToCart: '@L["AddToCart"]',
+            removedFromWishlist: '@L["RemovedFromWishlist"]',
+            deleteFailed: '@L["DeleteFailed"]'
+        };
+
+        const wishlistLoading = document.getElementById('wishlistLoading');
+        const wishlistEmpty = document.getElementById('wishlistEmpty');
+        const wishlistContent = document.getElementById('wishlistContent');
+
+        async function loadWishlist() {
+            try {
+                const resp = await fetch('/Product/GetWishlistItems');
+                const data = await resp.json();
+
+                wishlistLoading.style.display = 'none';
+
+                if (data.requireLogin) {
+                    wishlistEmpty.style.display = 'flex';
+                    wishlistEmpty.querySelector('p').textContent = t.signInToViewWishlist;
+                    return;
+                }
+
+                const items = Array.isArray(data) ? data : (data.items || []);
+
+                if (items.length === 0) {
+                    wishlistEmpty.style.display = 'flex';
+                    wishlistContent.style.display = 'none';
+                    return;
+                }
+
+                wishlistContent.style.display = 'grid';
+                renderWishlist(items);
+            } catch (e) {
+                wishlistLoading.style.display = 'none';
+                wishlistEmpty.style.display = 'flex';
+                wishlistEmpty.querySelector('p').textContent = t.unableToLoadWishlist;
+            }
+        }
+
+        function renderWishlist(items) {
+            wishlistContent.innerHTML = items.map(item => {
+                const img = item.imageUrl || 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=400&auto=format&fit=crop';
+                return `
+                    <article class="wishlist-card" data-product-id="${item.productId}">
+                        <a href="/Product/Details/${item.productId}" class="wishlist-card-image">
+                            <img src="${img}" alt="${item.productName}" loading="lazy" />
+                        </a>
+                        <button class="btn-remove-wishlist" data-product-id="${item.productId}" title="${t.removeFromWishlist}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="wishlist-card-info">
+                            <h3>${item.productName}</h3>
+                            <p>${item.price.toLocaleString('en-US')} VND</p>
+                            <div class="wishlist-card-actions">
+                                <button type="button" class="btn-minimal btn-add-cart" data-product-id="${item.productId}">
+                                    <i class="fas fa-shopping-bag"></i> ${t.addToCart}
+                                </button>
+                            </div>
+                        </div>
+                    </article>`;
+            }).join('');
+        }
+
+        // Event delegation
+        wishlistContent?.addEventListener('click', async (e) => {
+            if (e.target.closest('.btn-remove-wishlist')) {
+                const btn = e.target.closest('.btn-remove-wishlist');
+                const productId = btn.dataset.productId;
+                btn.disabled = true;
+                try {
+                    const resp = await fetch(`/Product/RemoveFromWishlist?productId=${productId}`, { method: 'POST' });
+                    const data = await resp.json();
+                    if (data.success) {
+                        if (window.showToast) window.showToast(t.removedFromWishlist, 'success');
+                        if (window.updateBadges) window.updateBadges();
+                        loadWishlist();
+                    }
+                } catch (err) {
+                    if (window.showToast) window.showToast(t.deleteFailed, 'error');
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+        });
+
+        loadWishlist();
+    })();
+</script>
+}

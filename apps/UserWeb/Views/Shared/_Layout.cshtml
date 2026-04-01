@@ -1,0 +1,224 @@
+@using System.Globalization
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @L["BrandName"]</title>
+    <script>
+        (function () {
+            try {
+                var key = 'store-theme-v2';
+                var saved = localStorage.getItem(key);
+                localStorage.removeItem('store-theme');
+                document.documentElement.setAttribute('data-theme', saved === 'warm' ? 'warm' : 'luxury');
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'luxury');
+            }
+        })();
+    </script>
+    <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UserWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    @{
+        var authToken = Context.Request.Cookies["auth_token"];
+        var authEmail = Context.Request.Cookies["auth_email"];
+        var isAuthenticated = !string.IsNullOrWhiteSpace(authToken);
+        var currentCulture = CultureInfo.CurrentUICulture.Name;
+        var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+    }
+    <header class="site-header">
+        <nav class="main-nav container">
+            <a class="brand-logo" asp-area="" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark"><i class="fas fa-gem" aria-hidden="true"></i></span>
+                <span class="brand-wordmark">@L["clothesstore"]</span>
+            </a>
+
+            <ul class="nav-center">
+                <li class="nav-has-mega">
+                    <a class="nav-main-link" data-nav-kind="category" data-nav-value="men" asp-controller="Product" asp-action="Shop" asp-route-category="Men">@L["Men"]</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-col">
+                            <h4>@L["MenPicks"]</h4>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Men" asp-route-search="Shirt">@L["Shirts"]</a>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Men" asp-route-search="Pants">@L["Pants"]</a>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Men" asp-route-search="Jacket">@L["Jackets"]</a>
+                        </div>
+                        <div class="mega-menu-col">
+                            <h4>@L["StyleNotes"]</h4>
+                            <p>@L["MenStyleNoteText"]</p>
+                        </div>
+                        <a class="mega-menu-image" asp-controller="Product" asp-action="Shop" asp-route-category="Men">
+                            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=800&auto=format&fit=crop" alt="Men style" loading="lazy" />
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-has-mega">
+                    <a class="nav-main-link" data-nav-kind="category" data-nav-value="women" asp-controller="Product" asp-action="Shop" asp-route-category="Women">@L["Women"]</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-col">
+                            <h4>@L["WomenPicks"]</h4>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Women" asp-route-search="Dress">@L["Dresses"]</a>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Women" asp-route-search="Top">@L["Tops"]</a>
+                            <a asp-controller="Product" asp-action="Shop" asp-route-category="Women" asp-route-search="Skirt">@L["Skirts"]</a>
+                        </div>
+                        <div class="mega-menu-col">
+                            <h4>@L["Editorial"]</h4>
+                            <p>@L["WomenStyleNoteText"]</p>
+                        </div>
+                        <a class="mega-menu-image" asp-controller="Product" asp-action="Shop" asp-route-category="Women">
+                            <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?q=80&w=800&auto=format&fit=crop" alt="Women style" loading="lazy" />
+                        </a>
+                    </div>
+                </li>
+                <li><a class="nav-main-link" data-nav-kind="category" data-nav-value="collection" asp-controller="Product" asp-action="Shop" asp-route-category="Collection">@L["Collection"]</a></li>
+                <li><a class="nav-main-link" data-nav-kind="sale" data-nav-value="price-asc" asp-controller="Product" asp-action="Shop" asp-route-sort="price-asc">@L["Sale"]</a></li>
+            </ul>
+
+            <div class="nav-right">
+                <form asp-controller="Product" asp-action="Shop" method="get" class="nav-search-form" role="search">
+                    <input type="text"
+                           name="search"
+                           value="@Context.Request.Query["search"]"
+                           class="nav-search-input"
+                           placeholder="@L["SearchProduct"]"
+                           aria-label="@L["SearchProduct"]" />
+                    <button type="submit" class="nav-search-btn" aria-label="Submit search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div id="searchSuggest" class="search-suggest" style="display:none;"></div>
+                </form>
+                <form asp-controller="Language" asp-action="SetLanguage" method="post" class="language-switcher-form language-switcher-pills">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="language-pill-group" role="group" aria-label="@L["Language"]">
+                        <button type="submit"
+                                name="culture"
+                                value="vi-VN"
+                                class="language-pill @(currentCulture == "vi-VN" ? "is-active" : string.Empty)"
+                                title="@L["LanguageVietnamese"]">
+                            VN
+                        </button>
+                        <button type="submit"
+                                name="culture"
+                                value="en-US"
+                                class="language-pill @(currentCulture == "en-US" ? "is-active" : string.Empty)"
+                                title="@L["LanguageEnglish"]">
+                            EN
+                        </button>
+                    </div>
+                </form>
+                <button type="button" id="themeToggleBtn" class="theme-toggle" aria-label="@L["SwitchTheme"]" title="@L["SwitchTheme"]">
+                    <i class="fas fa-sun theme-icon-light" aria-hidden="true"></i>
+                    <i class="fas fa-moon theme-icon-dark" aria-hidden="true"></i>
+                </button>
+                <a asp-controller="Product" asp-action="Wishlist" aria-label="@L["Wishlist"]" class="nav-icon-link" id="navWishlistLink">
+                    <i class="far fa-heart"></i>
+                    <span class="nav-badge" id="wishlistBadge"></span>
+                </a>
+                <a asp-controller="Product" asp-action="Cart" aria-label="@L["Cart"]" class="nav-icon-link" id="navCartLink" data-mini-cart-trigger="true">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="nav-badge" id="cartBadge"></span>
+                </a>
+                <details class="account-menu">
+                    <summary aria-label="@L["Account"]"><i class="far fa-user"></i></summary>
+                    <div class="account-dropdown">
+                        @if (isAuthenticated)
+                        {
+                            <p class="account-email">@authEmail</p>
+                            <a asp-controller="Product" asp-action="Cart" class="account-link"><i class="fas fa-shopping-bag"></i> @L["Cart"]</a>
+                            <a asp-controller="Product" asp-action="MyOrders" class="account-link"><i class="fas fa-box-open"></i> @L["MyOrders"]</a>
+                            <a asp-controller="Product" asp-action="Wishlist" class="account-link"><i class="fas fa-heart"></i> @L["Wishlist"]</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="account-link"><i class="fas fa-sign-out-alt"></i> @L["Logout"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="account-link"><i class="fas fa-sign-in-alt"></i> @L["Login"]</a>
+                            <a asp-controller="Account" asp-action="Register" class="account-link"><i class="fas fa-user-plus"></i> @L["Register"]</a>
+                        }
+                        <a href="http://localhost:5019" class="account-link"><i class="fas fa-shield-alt"></i> @L["AdminSite"]</a>
+                    </div>
+                </details>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="page-content">
+        @RenderBody()
+    </main>
+
+    <div id="miniCartOverlay" class="mini-cart-overlay" style="display:none;"></div>
+    <aside id="miniCartDrawer" class="mini-cart-drawer" aria-hidden="true">
+        <div class="mini-cart-head">
+            <h3>@L["QuickCart"]</h3>
+            <button id="miniCartClose" type="button" class="mini-cart-close" aria-label="@L["Close"]">&times;</button>
+        </div>
+        <div id="miniCartBody" class="mini-cart-body">
+            <p class="mini-cart-empty">@L["LoadingCart"]</p>
+        </div>
+        <div class="mini-cart-footer">
+            <a asp-controller="Product" asp-action="Cart" class="btn-minimal w-100">@L["ViewFullCart"]</a>
+        </div>
+    </aside>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <p class="footer-brand">@L["clothesstore"]</p>
+                <p class="footer-contact-item">Hotline: 0336 309 792</p>
+                <p class="footer-contact-item">Email: support@clothesstore.vn</p>
+                <p class="footer-contact-item">592  Dong Hung Thuan , District 1, HCMC</p>
+            </div>
+            <div class="footer-links">
+                <a asp-controller="Home" asp-action="Index">@L["About"]</a>
+                <a asp-controller="Home" asp-action="Privacy">@L["Contact"]</a>
+                <a asp-controller="Home" asp-action="Privacy">@L["PrivacyPolicy"]</a>
+                <a asp-controller="Home" asp-action="Privacy">@L["ReturnPolicy"]</a>
+            </div>
+            <div class="footer-links footer-payments">
+                <span>@L["Payments"]</span>
+                <div class="payment-icons">
+                    <span>VISA</span>
+                    <span>Mastercard</span>
+                    <span>MOMO</span>
+                    <span>VNPay</span>
+                </div>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                <a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+            </div>
+        </div>
+        <div class="container footer-copy">
+            <span>&copy; @DateTime.Now.Year Clothes Store</span>
+        </div>
+        <div class="container footer-partner-strip" aria-label="Trusted partners">
+            <span>GHTK</span>
+            <span>Viettel Post</span>
+            <span>J&T Express</span>
+            <span>VISA</span>
+            <span>Mastercard</span>
+            <span>MOMO</span>
+            <span>VNPay</span>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+    <div id="pageTransitionOverlay" class="page-transition-overlay" aria-hidden="true"></div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

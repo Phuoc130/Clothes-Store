@@ -1,0 +1,280 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["BankTransferPayment"];
+
+    var orderId = ViewBag.OrderId as int?;
+    var amount = (ViewBag.Amount as string) ?? "0";
+    var bankName = (ViewBag.BankName as string) ?? L["Bank"].Value;
+    var accountNo = (ViewBag.AccountNo as string) ?? "";
+    var accountName = (ViewBag.AccountName as string) ?? "";
+    var transferNote = (ViewBag.TransferNote as string) ?? "";
+    var qrUrl = (ViewBag.QrUrl as string) ?? "";
+}
+
+<section class="container section-space">
+    <div class="cart-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>@L["BankTransferPayment"]</h2>
+            <a asp-action="MyOrders" class="text-link">@L["MyOrders"]</a>
+        </div>
+
+        <article class="cart-summary transfer-card">
+            <div class="transfer-header">
+                <div class="transfer-order">@L["OrderId"]: <strong>#@orderId</strong></div>
+                <div class="transfer-amount">@amount VND</div>
+            </div>
+
+            <div class="transfer-grid">
+                <div class="transfer-row"><span>@L["Bank"]</span><strong>@bankName</strong></div>
+                <div class="transfer-row"><span>@L["AccountNumber"]</span><strong>@accountNo</strong></div>
+                <div class="transfer-row"><span>@L["AccountName"]</span><strong>@accountName</strong></div>
+                <div class="transfer-row"><span>@L["TransferNote"]</span><strong id="transferNoteText">@transferNote</strong></div>
+            </div>
+
+            <div class="transfer-copy-actions">
+                <button type="button" id="copyAccountBtn" class="btn-minimal">@L["CopyAccountNumber"]</button>
+                <button type="button" id="copyNoteBtn" class="btn-minimal">@L["CopyTransferNote"]</button>
+            </div>
+
+            <div class="transfer-qr-wrap">
+                <p>@L["ScanQrToPay"]</p>
+                @if (!string.IsNullOrWhiteSpace(qrUrl))
+                {
+                    <img src="@qrUrl" alt="@L["VietQrPayment"]" class="transfer-qr" />
+                }
+                else
+                {
+                    <p class="transfer-error">@L["CouldNotGenerateQr"]</p>
+                }
+            </div>
+
+            <div class="transfer-proof-upload">
+                <label for="proofImage">@L["UploadReceiptImageRecommended"]</label>
+                <label for="proofImage" id="proofDropZone" class="proof-drop-zone" tabindex="0">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <strong>@L["DragDropReceiptHere"]</strong>
+                    <span>@L["OrClickChooseImage"]</span>
+                    <em id="proofFileName">@L["NoFileSelected"]</em>
+                </label>
+                <input id="proofImage" type="file" accept="image/*" class="proof-file-input" />
+                <img id="proofPreview" class="transfer-proof-preview" alt="@L["UploadReceipt"]" style="display:none;" />
+            </div>
+
+            <div class="transfer-action-row">
+                <button id="submitTransferBtn" type="button" class="btn-minimal">@L["IHaveTransferred"]</button>
+                <a asp-action="Cart" class="btn-minimal">@L["BackToCart"]</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<div id="transferSuccessModal" class="transfer-success-modal" aria-hidden="true">
+    <div class="transfer-success-dialog">
+        <div class="transfer-confetti" id="transferConfetti"></div>
+        <div class="transfer-success-icon"><i class="fas fa-check"></i></div>
+        <h3>@L["ConfirmationSuccessful"]</h3>
+        <p>@L["TransferReceivedConfirmSoon"]</p>
+        <a href="/Product/MyOrders" class="btn-minimal">@L["ViewMyOrders"]</a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        var submitBtn = document.getElementById('submitTransferBtn');
+        var proofInput = document.getElementById('proofImage');
+        var proofDropZone = document.getElementById('proofDropZone');
+        var proofFileName = document.getElementById('proofFileName');
+        var proofPreview = document.getElementById('proofPreview');
+        var copyAccountBtn = document.getElementById('copyAccountBtn');
+        var copyNoteBtn = document.getElementById('copyNoteBtn');
+        var successModal = document.getElementById('transferSuccessModal');
+        var confettiHost = document.getElementById('transferConfetti');
+        var orderId = @((orderId ?? 0));
+        var accountNo = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(accountNo));
+        var transferNote = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(transferNote));
+        var noFileSelectedText = '@L["NoFileSelected"]';
+        var submitDefaultText = '@L["IHaveTransferred"]';
+        var submittingText = '@L["Processing"]';
+        var verifyingText = '@L["VerifyingTransfer"]';
+        var thankYouText = '@L["ThankYouForYourPurchase"]';
+        var isRedirecting = false;
+
+        if (!submitBtn) return;
+
+        function updateFileLabel() {
+            if (!proofFileName || !proofInput) return;
+            var fileName = proofInput.files && proofInput.files.length > 0
+                ? proofInput.files[0].name
+                : noFileSelectedText;
+            proofFileName.textContent = fileName;
+
+            if (!proofPreview) return;
+            if (!proofInput.files || proofInput.files.length === 0) {
+                proofPreview.src = '';
+                proofPreview.style.display = 'none';
+                return;
+            }
+
+            var file = proofInput.files[0];
+            if (!file.type || file.type.indexOf('image/') !== 0) {
+                proofPreview.src = '';
+                proofPreview.style.display = 'none';
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                if (!evt || !evt.target) return;
+                proofPreview.src = evt.target.result;
+                proofPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (proofInput) {
+            proofInput.addEventListener('change', updateFileLabel);
+        }
+
+        if (proofDropZone && proofInput) {
+            ['dragenter', 'dragover'].forEach(function (eventName) {
+                proofDropZone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    proofDropZone.classList.add('is-dragging');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(function (eventName) {
+                proofDropZone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    proofDropZone.classList.remove('is-dragging');
+                });
+            });
+
+            proofDropZone.addEventListener('drop', function (event) {
+                if (!event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length) return;
+                proofInput.files = event.dataTransfer.files;
+                updateFileLabel();
+            });
+        }
+
+        function spawnConfetti() {
+            if (!confettiHost) return;
+            confettiHost.innerHTML = '';
+            for (var i = 0; i < 24; i++) {
+                var piece = document.createElement('span');
+                piece.className = 'confetti-piece';
+                piece.style.left = (Math.random() * 100).toFixed(2) + '%';
+                piece.style.animationDelay = (Math.random() * 0.45).toFixed(2) + 's';
+                piece.style.animationDuration = (1.2 + Math.random() * 0.8).toFixed(2) + 's';
+                confettiHost.appendChild(piece);
+            }
+        }
+
+        function showSuccessModal() {
+            if (!successModal) return;
+            spawnConfetti();
+            successModal.classList.add('open');
+            successModal.setAttribute('aria-hidden', 'false');
+
+            var messageEl = successModal.querySelector('p');
+            if (messageEl) {
+                messageEl.textContent = thankYouText;
+            }
+        }
+
+        function notify(message, type) {
+            if (window.showToast) {
+                window.showToast(message, type || 'info');
+                return;
+            }
+            window.alert(message);
+        }
+
+        function copyText(text, okMessage) {
+            navigator.clipboard.writeText(text)
+                .then(function () {
+                    if (window.showToast) window.showToast(okMessage || '@L["CopiedSuccessfully"]', 'success');
+                })
+                .catch(function () {
+                    if (window.showToast) window.showToast('@L["UnableToCopy"]', 'error');
+                });
+        }
+
+        if (copyAccountBtn) {
+            copyAccountBtn.addEventListener('click', function () {
+                copyText(accountNo, '@L["AccountNumberCopied"]');
+            });
+        }
+
+        if (copyNoteBtn) {
+            copyNoteBtn.addEventListener('click', function () {
+                copyText(transferNote, '@L["TransferNoteCopied"]');
+            });
+        }
+
+        submitBtn.addEventListener('click', function () {
+            if (!orderId || orderId <= 0) {
+                notify('@L["UnableToSubmitConfirmation"]', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = submittingText;
+
+            var form = new FormData();
+            form.append('orderId', orderId);
+            if (proofInput && proofInput.files && proofInput.files.length > 0) {
+                form.append('proofImage', proofInput.files[0]);
+            }
+
+            fetch('/Product/UploadTransferProof', {
+                method: 'POST',
+                credentials: 'include',
+                body: form
+            })
+                .then(function (r) {
+                    return r.text().then(function (text) {
+                        var payload = null;
+                        try {
+                            payload = JSON.parse(text);
+                        } catch (e) {
+                            payload = null;
+                        }
+
+                        if (!payload) {
+                            throw new Error('@L["UnableToSubmitConfirmation"]');
+                        }
+
+                        return payload;
+                    });
+                })
+                .then(function (data) {
+                    if (!data.success) {
+                        notify(data.message || '@L["UnableToSubmitConfirmation"]', 'error');
+                        return;
+                    }
+
+                    notify(data.message || '@L["TransferConfirmationSubmitted"]', 'success');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('btn-loading');
+                    submitBtn.innerHTML = '<span class="inline-spinner" aria-hidden="true"></span>' + verifyingText;
+                    isRedirecting = true;
+
+                    setTimeout(function () {
+                        window.location.href = '/Product/OrderSuccess?orderId=' + encodeURIComponent(orderId);
+                    }, 2000);
+                })
+                .catch(function (err) {
+                    notify(err && err.message ? err.message : '@L["ConnectionError"]', 'error');
+                })
+                .finally(function () {
+                    if (isRedirecting) return;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.textContent = submitDefaultText;
+                });
+        });
+    })();
+</script>
+}

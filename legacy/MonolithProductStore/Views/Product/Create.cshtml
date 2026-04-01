@@ -1,0 +1,108 @@
+@model ProductStore.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+
+    var selectedSizes = (Model.SizesCsv ?? string.Empty)
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
+
+<section class="container section-space admin-shell">
+    <aside class="admin-sidebar reveal-on-scroll">
+        <p class="admin-brand">ADMIN</p>
+        <a href="#">Dashboard</a>
+        <a asp-action="Admin" class="active">Products</a>
+        <a href="#">Orders</a>
+        <a href="#">Customers</a>
+    </aside>
+
+    <div class="admin-main reveal-on-scroll">
+        <div class="admin-form admin-form-wide">
+            <h2>Create Product</h2>
+
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Category"></label>
+                    <select asp-for="Category" class="form-control">
+                        <option>Men</option>
+                        <option>Women</option>
+                        <option>Accessories</option>
+                        <option>Collection</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Type">Product Type</label>
+                    <input asp-for="Type" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Price"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DiscountPercent">Discount (%)</label>
+                    <input asp-for="DiscountPercent" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Stock"></label>
+                    <input asp-for="Stock" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ColorHex">Color</label>
+                    <input asp-for="ColorHex" type="color" class="form-control form-control-color" />
+                </div>
+
+                <div class="form-group">
+                    <label>Sizes</label>
+                    <div class="size-checkbox-group">
+                        @foreach (var size in new[] { "S", "M", "L", "XL" })
+                        {
+                            <label>
+                                <input type="checkbox" name="selectedSizes" value="@size" checked="@selectedSizes.Contains(size)" /> @size
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Images (from your computer)</label>
+                    <input class="form-control" type="file" name="imageFiles" id="productImages" multiple accept="image/*" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    <div id="imagePreview" class="upload-preview-grid"></div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="form-group form-check">
+                    <input asp-for="Availability" class="form-check-input" />
+                    <label asp-for="Availability" class="form-check-label"></label>
+                </div>
+
+                <div class="admin-actions">
+                    <button type="submit" class="btn-minimal">Save</button>
+                    <a asp-action="Admin" class="btn-minimal">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

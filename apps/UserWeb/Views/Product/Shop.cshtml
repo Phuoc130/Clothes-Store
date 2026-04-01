@@ -1,0 +1,530 @@
+@model UserWeb.Views.ViewModels.ProductShopViewModel
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+
+@{
+    ViewData["Title"] = L["ShopTitle"];
+    string T(string key, string fallback)
+    {
+        var value = L[key];
+        return value.ResourceNotFound ? fallback : value.Value;
+    }
+
+    var searchNameText = T("SearchName", "Search");
+    var searchPlaceholderText = T("SearchPlaceholder", "Enter product name...");
+    var searchText = T("Search", "Search");
+    var clearText = T("Clear", "Clear");
+    var showingProductsFormat = T("ShowingProductsFormat", "Showing {0} of {1} products");
+    var addToCartText = T("AddToCart", "Add to Cart");
+
+    var noMatchingProductsText = global::System.Text.Json.JsonSerializer.Serialize(L["NoMatchingProducts"].Value);
+    var filtersUpdatedText = global::System.Text.Json.JsonSerializer.Serialize(L["FiltersUpdated"].Value);
+    var filterLoadFailedText = global::System.Text.Json.JsonSerializer.Serialize(L["FilterLoadFailed"].Value);
+    var serverConnectFailedText = global::System.Text.Json.JsonSerializer.Serialize(L["ServerConnectFailed"].Value);
+    var filtersClearedText = global::System.Text.Json.JsonSerializer.Serialize(L["FiltersCleared"].Value);
+}
+
+<section class="container section-space">
+    <div class="shop-layout">
+        <aside class="shop-filter-panel reveal-on-scroll">
+            <form id="jsShopFilterForm" asp-action="Shop" method="get" class="shop-filter-form" data-ajax-filter="true">
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@searchNameText</span>
+                    </summary>
+                    <div class="filter-body">
+                        <input id="jsAjaxSearchInput" type="text" name="search" value="@Model.Search" class="form-control" placeholder="@searchPlaceholderText" />
+                        <div class="search-controls">
+                            <button id="jsAjaxSearchBtn" type="button" class="btn-minimal btn-search-primary">@searchText</button>
+                            <button id="jsAjaxClearBtn" type="button" class="btn-text-clear">@clearText</button>
+                        </div>
+                        <p id="jsAjaxSearchFeedback" class="search-feedback"></p>
+                    </div>
+                </details>
+
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@L["Category"]</span>
+                    </summary>
+                    <div class="filter-body">
+                        <label class="filter-check">
+                            <input type="radio" name="category" value="" checked="@(string.IsNullOrWhiteSpace(Model.Category))" />
+                            <span>@L["All"]</span>
+                        </label>
+                        @foreach (var item in Model.Categories)
+                        {
+                            <label class="filter-check">
+                                <input type="radio" name="category" value="@item" checked="@(Model.Category == item)" />
+                                <span>@item</span>
+                            </label>
+                        }
+                    </div>
+                </details>
+
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@L["Size"]</span>
+                    </summary>
+                    <div class="filter-body">
+                        <div class="size-filter-grid">
+                            <label class="size-filter-chip">
+                                <input type="radio" name="size" value="" checked="@(string.IsNullOrWhiteSpace(Model.Size))" />
+                                <span>@L["All"]</span>
+                            </label>
+                            @foreach (var item in Model.Sizes)
+                            {
+                                <label class="size-filter-chip">
+                                    <input type="radio" name="size" value="@item" checked="@(Model.Size == item)" />
+                                    <span>@item</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </details>
+
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@L["Price"]</span>
+                    </summary>
+                    <div class="filter-body">
+                        <label>@L["Min"]</label>
+                        <input type="range" name="minPrice" min="0" max="3000000" step="50000" value="@(Model.MinPrice ?? 0)" />
+                        <label>@L["Max"]</label>
+                        <input type="range" name="maxPrice" min="0" max="3000000" step="50000" value="@(Model.MaxPrice ?? 3000000)" />
+                    </div>
+                </details>
+
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@L["Color"]</span>
+                    </summary>
+                    <div class="filter-body">
+                        <div class="color-dots">
+                            <label class="color-dot-wrap" title="@L["All"]">
+                                <input type="radio" name="color" value="" checked="@(string.IsNullOrWhiteSpace(Model.Color))" />
+                                <span class="color-dot color-dot-empty"></span>
+                            </label>
+                            @foreach (var color in Model.Colors)
+                            {
+                                <label class="color-dot-wrap" title="@color">
+                                    <input type="radio" name="color" value="@color" checked="@(Model.Color == color)" />
+                                    <span class="color-dot" style="background-color:@color"></span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </details>
+
+                <details class="filter-accordion" open>
+                    <summary>
+                        <span class="filter-accordion-title">@L["Sort"]</span>
+                    </summary>
+                    <div class="filter-body">
+                        <select name="sort" class="form-control">
+                            <option value="newest" selected="@(Model.Sort == "newest")">@L["Newest"]</option>
+                            <option value="price-asc" selected="@(Model.Sort == "price-asc")">@L["PriceLowToHigh"]</option>
+                            <option value="price-desc" selected="@(Model.Sort == "price-desc")">@L["PriceHighToLow"]</option>
+                        </select>
+                    </div>
+                </details>
+
+                <input id="jsLoadInput" type="hidden" name="load" value="@Math.Max(Model.LoadCount, 8)" />
+                <button type="submit" class="btn-minimal w-100 filter-apply-btn">@L["ApplyFilters"]</button>
+            </form>
+        </aside>
+
+        <div class="shop-grid-side reveal-on-scroll">
+            <nav class="shop-breadcrumb" aria-label="Breadcrumb">
+                <a asp-controller="Home" asp-action="Index">@L["Home"]</a>
+                <span>/</span>
+                <a asp-action="Shop">@L["Products"]</a>
+                @if (!string.IsNullOrWhiteSpace(Model.Category))
+                {
+                    <span>/</span>
+                    <span>@Model.Category</span>
+                }
+            </nav>
+
+            <div class="shop-grid-header">
+                <div>
+                    <h2>@L["Products"]</h2>
+                    <p class="shop-result-text" id="jsProductCount">@string.Format(showingProductsFormat, Math.Min(Model.LoadCount, Model.TotalCount), Model.TotalCount)</p>
+                </div>
+                <span class="shop-total-count"><span id="jsTotalCount">@Model.TotalCount</span> @L["Items"]</span>
+            </div>
+
+            <div class="shop-grid" id="shopGrid" data-load-count="@Math.Min(Model.LoadCount, Model.TotalCount)" data-total-count="@Model.TotalCount">
+                @if (!Model.Products.Any())
+                {
+                    <div class="shop-empty-state">
+                        <i class="far fa-frown"></i>
+                        <p>@L["NoMatchingProducts"]</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var p in Model.Products)
+                    {
+                    var front = string.IsNullOrWhiteSpace(p.ImageUrl)
+                        ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                        : p.ImageUrl;
+                    var back = string.IsNullOrWhiteSpace(p.HoverImageUrl) ? front : p.HoverImageUrl;
+                    var gallery = string.Join('|', p.GetImageGallery());
+                    var sizes = p.GetSizes().Any() ? string.Join(',', p.GetSizes()) : "S,M,L";
+                    var sizeList = sizes.Split(',');
+                    var hasDiscount = p.DiscountPercent.HasValue && p.DiscountPercent.Value > 0;
+                    var discountedPriceValue = hasDiscount
+                        ? decimal.Round(p.Price * (1 - (p.DiscountPercent!.Value / 100m)), 0, MidpointRounding.AwayFromZero)
+                        : p.Price;
+                    var displayPrice = discountedPriceValue.ToString("N0") + "đ";
+                    var originalPrice = p.Price.ToString("N0") + "đ";
+
+                    <article class="shop-card" data-product-id="@p.Product_ID">
+                        <a asp-action="Details" asp-route-id="@p.Product_ID" class="shop-card-image">
+                            @if (hasDiscount)
+                            {
+                                <span class="product-badge discount">-@decimal.Round(p.DiscountPercent!.Value, 0)%</span>
+                            }
+                            else if (p.Stock < 15)
+                            {
+                                <span class="product-badge hot">@L["Hot"]</span>
+                            }
+                            <img loading="lazy" class="product-front" src="@front" alt="@p.Name" />
+                            <img loading="lazy" class="product-hover" src="@back" alt="@p.Name alternate" />
+                            <div class="shop-card-actions">
+                                <button class="btn-minimal quick-view-btn"
+                                        type="button"
+                                        data-name="@p.Name"
+                                    data-price="@displayPrice"
+                                        data-image="@front"
+                                        data-images="@gallery"
+                                        data-sizes="@sizes"
+                                        data-description="@p.Description"
+                                        data-product-id="@p.Product_ID">
+                                    <i class="far fa-eye"></i> @L["QuickView"]
+                                </button>
+                            </div>
+                        </a>
+                        <button class="btn-wishlist-overlay btn-add-wishlist"
+                                type="button"
+                                data-product-id="@p.Product_ID"
+                                title="@L["AddToWishlist"]">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="shop-card-body">
+                            <div class="product-meta">
+                                <h3>@p.Name</h3>
+                                @if (hasDiscount)
+                                {
+                                    <p><span class="price-current">@displayPrice</span> <span class="price-original">@originalPrice</span></p>
+                                }
+                                else
+                                {
+                                    <p><span class="price-current">@displayPrice</span></p>
+                                }
+                            </div>
+                            <div class="shop-card-size-row">
+                                @foreach (var s in sizeList)
+                                {
+                                    <button type="button" class="size-chip-mini" data-size="@s.Trim()">@s.Trim()</button>
+                                }
+                            </div>
+                            <button class="btn-minimal btn-add-cart shop-card-cart-btn"
+                                    type="button"
+                                    data-product-id="@p.Product_ID">
+                                <i class="fas fa-shopping-bag"></i> @addToCartText
+                            </button>
+                        </div>
+                    </article>
+                    }
+                }
+            </div>
+
+            <div class="shop-grid-loader" id="jsShopGridLoader" hidden>
+                <span class="shop-spinner"></span>
+                <p>@L["FilteringProducts"]</p>
+            </div>
+
+            <div class="shop-load-more-wrap" id="jsLoadMoreWrap" style="@(Model.HasMore ? string.Empty : "display:none;")">
+                <button id="jsLoadMoreBtn"
+                        class="btn-minimal"
+                        type="button"
+                        data-next-load="@(Math.Min(Model.LoadCount + 8, Model.TotalCount))">
+                    @L["LoadMore"]
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        var noProductsText = @Html.Raw(noMatchingProductsText);
+        var filtersUpdatedText = @Html.Raw(filtersUpdatedText);
+        var filterLoadFailedText = @Html.Raw(filterLoadFailedText);
+        var serverConnectFailedText = @Html.Raw(serverConnectFailedText);
+        var filtersClearedText = @Html.Raw(filtersClearedText);
+
+        var form = document.getElementById('jsShopFilterForm');
+        var searchInput = document.getElementById('jsAjaxSearchInput');
+        var searchBtn = document.getElementById('jsAjaxSearchBtn');
+        var clearBtn = document.getElementById('jsAjaxClearBtn');
+        var feedback = document.getElementById('jsAjaxSearchFeedback');
+        var shopGrid = document.getElementById('shopGrid');
+        var gridSide = document.querySelector('.shop-grid-side');
+        var loader = document.getElementById('jsShopGridLoader');
+        var loadInput = document.getElementById('jsLoadInput');
+        var loadMoreBtn = document.getElementById('jsLoadMoreBtn');
+        var loadMoreWrap = document.getElementById('jsLoadMoreWrap');
+        var productCountText = document.getElementById('jsProductCount');
+        var totalCountText = document.getElementById('jsTotalCount');
+        var loadMoreSkeletonClass = 'js-loadmore-skeleton';
+
+        if (!form || !shopGrid || !loadInput) {
+            return;
+        }
+
+        function setLoading(state, isLoadMore) {
+            if (state) {
+                gridSide.classList.add('is-loading');
+                if (isLoadMore) {
+                    gridSide.classList.add('is-loading-more');
+                }
+                if (loader) loader.hidden = false;
+            } else {
+                gridSide.classList.remove('is-loading');
+                gridSide.classList.remove('is-loading-more');
+                if (loader) loader.hidden = true;
+            }
+        }
+
+        function addLoadMoreSkeleton(count) {
+            var skeletonHtml = '';
+            for (var i = 0; i < count; i++) {
+                skeletonHtml += '<article class="shop-skeleton-card ' + loadMoreSkeletonClass + '"><div class="shop-skeleton-image"></div><div class="shop-skeleton-line"></div><div class="shop-skeleton-line short"></div><div class="shop-skeleton-line"></div></article>';
+            }
+            shopGrid.insertAdjacentHTML('beforeend', skeletonHtml);
+        }
+
+        function clearLoadMoreSkeleton() {
+            shopGrid.querySelectorAll('.' + loadMoreSkeletonClass).forEach(function (el) {
+                el.remove();
+            });
+        }
+
+        function syncLoadMoreState(newDoc) {
+            var remoteBtn = newDoc.getElementById('jsLoadMoreBtn');
+            if (!loadMoreWrap || !loadMoreBtn) return;
+
+            if (!remoteBtn) {
+                loadMoreWrap.style.display = 'none';
+                return;
+            }
+
+            loadMoreWrap.style.display = '';
+            loadMoreBtn.dataset.nextLoad = remoteBtn.dataset.nextLoad || loadMoreBtn.dataset.nextLoad;
+        }
+
+        function replaceContent(newDoc, appendMode) {
+            var remoteGrid = newDoc.getElementById('shopGrid');
+            if (!remoteGrid) return false;
+
+            if (appendMode) {
+                var existingCount = shopGrid.querySelectorAll('.shop-card').length;
+                var remoteCards = remoteGrid.querySelectorAll('.shop-card');
+                for (var i = existingCount; i < remoteCards.length; i++) {
+                    shopGrid.insertAdjacentHTML('beforeend', remoteCards[i].outerHTML);
+                }
+            } else {
+                shopGrid.innerHTML = remoteGrid.innerHTML;
+            }
+
+            shopGrid.dataset.loadCount = remoteGrid.dataset.loadCount || shopGrid.dataset.loadCount;
+            shopGrid.dataset.totalCount = remoteGrid.dataset.totalCount || shopGrid.dataset.totalCount;
+
+            var remoteCount = newDoc.getElementById('jsProductCount');
+            if (remoteCount && productCountText) {
+                productCountText.textContent = remoteCount.textContent || '';
+            }
+
+            var remoteTotal = newDoc.getElementById('jsTotalCount');
+            if (remoteTotal && totalCountText) {
+                totalCountText.textContent = remoteTotal.textContent || '';
+            }
+
+            syncLoadMoreState(newDoc);
+
+            if (!shopGrid.querySelector('.shop-card')) {
+                shopGrid.innerHTML = '<div class="shop-empty-state"><i class="far fa-frown"></i><p>' + noProductsText + '</p></div>';
+            }
+
+            return true;
+        }
+
+        function requestShop(params, appendMode) {
+            var url = '/Product/Shop?' + params.toString();
+            setLoading(true, appendMode);
+
+            if (appendMode) {
+                addLoadMoreSkeleton(4);
+            }
+
+            return fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(function (resp) {
+                    if (!resp.ok) {
+                        throw new Error(filterLoadFailedText);
+                    }
+                    return resp.text();
+                })
+                .then(function (html) {
+                    var parser = new DOMParser();
+                    var newDoc = parser.parseFromString(html, 'text/html');
+                    var replaced = replaceContent(newDoc, appendMode);
+
+                    if (!replaced) {
+                        window.location.href = url;
+                        return;
+                    }
+
+                    if (feedback) {
+                        feedback.textContent = filtersUpdatedText;
+                        feedback.className = 'search-feedback is-success';
+                    }
+
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, '', url);
+                    }
+                })
+                .catch(function (err) {
+                    if (feedback) {
+                        feedback.textContent = err.message || serverConnectFailedText;
+                        feedback.className = 'search-feedback is-error';
+                    }
+                })
+                .finally(function () {
+                    clearLoadMoreSkeleton();
+                    setLoading(false, appendMode);
+                });
+        }
+
+        function collectParams() {
+            return new URLSearchParams(new FormData(form));
+        }
+
+        function applyFilters(resetLoad) {
+            var params = collectParams();
+            if (resetLoad) {
+                params.set('load', '8');
+                loadInput.value = '8';
+            }
+            return requestShop(params, false);
+        }
+
+        function clearFilters() {
+            if (searchInput) searchInput.value = '';
+
+            var categoryAll = form.querySelector('input[name="category"][value=""]');
+            var sizeAll = form.querySelector('input[name="size"][value=""]');
+            var colorAll = form.querySelector('input[name="color"][value=""]');
+            var sortSelect = form.querySelector('select[name="sort"]');
+            var minRange = form.querySelector('input[name="minPrice"]');
+            var maxRange = form.querySelector('input[name="maxPrice"]');
+
+            if (categoryAll) categoryAll.checked = true;
+            if (sizeAll) sizeAll.checked = true;
+            if (colorAll) colorAll.checked = true;
+            if (sortSelect) sortSelect.value = 'newest';
+            if (minRange) minRange.value = minRange.min || '0';
+            if (maxRange) maxRange.value = maxRange.max || '3000000';
+
+            loadInput.value = '8';
+            if (feedback) {
+                feedback.textContent = filtersClearedText;
+                feedback.className = 'search-feedback is-muted';
+            }
+
+            var params = new URLSearchParams();
+            params.set('load', '8');
+            return requestShop(params, false);
+        }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            applyFilters(true);
+        });
+
+        form.addEventListener('change', function (event) {
+            if (!event.target) return;
+            if (event.target.name === 'search') return;
+            applyFilters(true);
+        });
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', function () {
+                applyFilters(true);
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                clearFilters();
+            });
+        }
+
+        if (searchInput) searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                applyFilters(true);
+            }
+        });
+
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function () {
+                var next = parseInt(loadMoreBtn.dataset.nextLoad || '0', 10);
+                if (!next || Number.isNaN(next)) return;
+                loadMoreBtn.disabled = true;
+                loadInput.value = String(next);
+                var params = collectParams();
+                params.set('load', String(next));
+                requestShop(params, true).finally(function () {
+                    loadMoreBtn.disabled = false;
+                });
+            });
+        }
+    })();
+</script>
+
+<div class="quick-view-modal" id="quickViewModal" aria-hidden="true">
+    <div class="quick-view-dialog">
+        <button class="quick-view-close" id="quickViewClose" type="button">&times;</button>
+        <div class="quick-view-content">
+            <div class="quick-view-gallery-stage">
+                <img id="quickViewImage" src="" alt="Quick view image" />
+                <button type="button" id="quickViewPrev" class="quick-view-nav prev" aria-label="Ảnh trước">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" id="quickViewNext" class="quick-view-nav next" aria-label="Ảnh sau">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="quick-view-info">
+                <h3 id="quickViewName"></h3>
+                <p id="quickViewPrice"></p>
+                <p id="quickViewDescription"></p>
+                <label for="quickViewSize">@L["Size"]</label>
+                <select id="quickViewSize" class="form-control"></select>
+                <div class="quick-view-actions">
+                    <button type="button" class="btn-minimal btn-add-cart" id="quickViewAddCart" data-product-id="">
+                        <i class="fas fa-shopping-bag"></i> @addToCartText
+                    </button>
+                    <button type="button" class="btn-wishlist-qv btn-add-wishlist" id="quickViewAddWishlist" data-product-id="">
+                        <i class="far fa-heart"></i> @L["Wishlist"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

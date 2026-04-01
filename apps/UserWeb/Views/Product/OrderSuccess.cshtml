@@ -1,0 +1,28 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["OrderSuccessTitle"];
+    var orderId = ViewBag.OrderId as int?;
+}
+
+<section class="container section-space">
+    <div class="cart-page reveal-on-scroll">
+        <article class="cart-summary payment-result-card is-success">
+            <div class="cart-total-row payment-result-title">
+                <strong>@L["OrderSuccessTitle"]</strong>
+            </div>
+            <div class="cart-total-row payment-result-row">
+                <span>@L["OrderId"]:</span>
+                <span>#@(orderId?.ToString() ?? "-")</span>
+            </div>
+            <div class="cart-total-row payment-result-row">
+                <span>@L["Message"]:</span>
+                <span>@L["OrderSuccessMessage"]</span>
+            </div>
+
+            <div class="payment-result-actions">
+                <a asp-action="MyOrders" class="btn-minimal">@L["ViewMyOrders"]</a>
+                <a asp-action="Shop" class="btn-minimal">@L["ContinueShopping"]</a>
+            </div>
+        </article>
+    </div>
+</section>

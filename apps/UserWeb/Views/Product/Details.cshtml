@@ -1,0 +1,226 @@
+@model UserWeb.Views.ViewModels.ProductDetailViewModel
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+
+@{
+    ViewData["Title"] = Model.Product.Name;
+
+    var gallery = Model.GalleryImages.Any()
+        ? Model.GalleryImages
+        : ["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"];
+
+    var selectedSizes = Model.Product.GetSizes().Any()
+        ? Model.Product.GetSizes()
+        : new[] { "S", "M", "L" };
+}
+
+<section class="container section-space">
+    <div class="product-detail-layout reveal-on-scroll">
+        <div class="detail-gallery">
+            <div class="detail-main-image-wrap">
+                <img id="detailMainImage" class="detail-main-image" src="@gallery[0]" alt="@Model.Product.Name" loading="lazy" />
+            </div>
+            <div class="detail-thumb-grid">
+                @foreach (var image in gallery)
+                {
+                    <button type="button" class="detail-thumb" data-image="@image">
+                        <img src="@image" alt="@L["Thumbnail"]" loading="lazy" />
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="detail-info">
+            <h2>@Model.Product.Name</h2>
+            <p class="detail-price">@Model.Product.PriceDisplay</p>
+
+            <div class="detail-size-select">
+                <p>@L["Size"]</p>
+                <div id="detailSizePicker">
+                    @foreach (var size in selectedSizes)
+                    {
+                        <button type="button" class="size-chip" data-size="@size">@size</button>
+                    }
+                </div>
+            </div>
+
+            <p class="detail-description">@Model.Product.Description</p>
+
+            <div class="detail-qty-row">
+                <label for="detailQty">@L["Quantity"]</label>
+                <div class="qty-selector">
+                    <button type="button" class="qty-btn" id="qtyMinus">−</button>
+                    <input type="number" id="detailQty" value="1" min="1" max="99" class="qty-input" />
+                    <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <button type="button"
+                        class="btn-minimal btn-add-cart detail-cart-btn"
+                        data-product-id="@Model.Product.Product_ID">
+                    <i class="fas fa-shopping-bag"></i> @L["AddToCart"]
+                </button>
+                <button type="button"
+                        class="btn-minimal detail-pay-now-btn"
+                        data-product-id="@Model.Product.Product_ID">
+                    <i class="fas fa-credit-card"></i> @L["PayNow"]
+                </button>
+                <button type="button"
+                        class="btn-wishlist-detail btn-add-wishlist"
+                        data-product-id="@Model.Product.Product_ID">
+                    <i class="far fa-heart"></i> @L["Wishlist"]
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container section-space reveal-on-scroll">
+    <div class="section-header split">
+        <h2>@L["YouMayAlsoLike"]</h2>
+        <a asp-action="Shop" class="text-link">@L["BackToShop"]</a>
+    </div>
+    <div class="featured-grid">
+        @foreach (var item in Model.RelatedProducts)
+        {
+            var frontImage = string.IsNullOrWhiteSpace(item.ImageUrl)
+                ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                : item.ImageUrl;
+
+            <article class="product-item related-product-card">
+                <a asp-action="Details" asp-route-id="@item.Product_ID" class="product-image-wrap">
+                    <img class="product-front" src="@frontImage" alt="@item.Name" loading="lazy" />
+                </a>
+                <button class="btn-wishlist-overlay btn-add-wishlist"
+                        type="button"
+                        data-product-id="@item.Product_ID"
+                        title="@L["AddToWishlist"]">
+                    <i class="far fa-heart"></i>
+                </button>
+                <div class="product-meta">
+                    <h3>@item.Name</h3>
+                    <p>@item.PriceDisplay</p>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var qtyInput = document.getElementById('detailQty');
+        var minusBtn = document.getElementById('qtyMinus');
+        var plusBtn = document.getElementById('qtyPlus');
+
+        if (minusBtn) minusBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var v = parseInt(qtyInput.value) || 1;
+            qtyInput.value = Math.max(1, v - 1);
+        });
+
+        if (plusBtn) plusBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var v = parseInt(qtyInput.value) || 1;
+            qtyInput.value = Math.min(99, v + 1);
+        });
+
+        // Detail page Add to Cart — uses .detail-cart-btn class
+        var detailCartBtn = document.querySelector('.detail-cart-btn');
+        var payNowBtn = document.querySelector('.detail-pay-now-btn');
+        if (detailCartBtn) {
+            detailCartBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var productId = detailCartBtn.dataset.productId;
+                var qty = parseInt(qtyInput.value) || 1;
+
+                // Get selected size from picker
+                var activeSize = document.querySelector('#detailSizePicker .size-chip.active');
+                var size = activeSize ? (activeSize.dataset.size || activeSize.textContent.trim()) : null;
+
+                console.log('[Detail] Cart click: productId=' + productId + ' qty=' + qty + ' size=' + size);
+
+                if (!size) {
+                    if (window.showToast) {
+                        window.showToast('@L["PleaseSelectSizeBeforeAddingToCart"]', 'warning');
+                    } else {
+                        alert('@L["PleaseSelectSizeFirst"]');
+                    }
+                    return;
+                }
+
+                if (window.addToCart) {
+                    window.addToCart(productId, qty, size, detailCartBtn);
+                } else {
+                    console.error('[Detail] window.addToCart not found');
+                }
+            });
+            console.log('[Detail] Cart button handler attached');
+        }
+
+        if (payNowBtn) {
+            payNowBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var productId = payNowBtn.dataset.productId;
+                var qty = parseInt(qtyInput.value) || 1;
+
+                var activeSize = document.querySelector('#detailSizePicker .size-chip.active');
+                var size = activeSize ? (activeSize.dataset.size || activeSize.textContent.trim()) : null;
+
+                if (!size) {
+                    if (window.showToast) {
+                        window.showToast('@L["PleaseSelectSizeBeforeAddingToCart"]', 'warning');
+                    } else {
+                        alert('@L["PleaseSelectSizeFirst"]');
+                    }
+                    return;
+                }
+
+                payNowBtn.disabled = true;
+                payNowBtn.classList.add('btn-loading');
+
+                var url = '/Product/AddToCart?productId=' + encodeURIComponent(productId)
+                    + '&qty=' + encodeURIComponent(qty)
+                    + '&size=' + encodeURIComponent(size);
+
+                fetch(url, { method: 'POST', credentials: 'include' })
+                    .then(function (resp) { return resp.json(); })
+                    .then(function (data) {
+                        if (data.requireLogin) {
+                            if (window.showToast) window.showToast(data.message || 'Please sign in', 'warning');
+                            setTimeout(function () { window.location.href = '/Account/Login'; }, 1200);
+                            return;
+                        }
+
+                        if (!data.success) {
+                            if (window.showToast) window.showToast(data.message || '@L["UnableToPlaceOrder"]', 'error');
+                            return;
+                        }
+
+                        if (window.showToast) window.showToast('@L["RedirectingToCartForCheckout"]', 'success');
+                        setTimeout(function () {
+                            window.location.href = '/Product/Cart';
+                        }, 350);
+                    })
+                    .catch(function () {
+                        if (window.showToast) window.showToast('@L["ConnectionError"]', 'error');
+                    })
+                    .finally(function () {
+                        payNowBtn.disabled = false;
+                        payNowBtn.classList.remove('btn-loading');
+                    });
+            });
+            console.log('[Detail] Pay now button handler attached');
+        }
+
+        // Detail page Wishlist is handled by the global delegation in site.js
+        // because it has class .btn-add-wishlist
+
+        console.log('[Detail] Script initialized');
+    })();
+</script>
+}

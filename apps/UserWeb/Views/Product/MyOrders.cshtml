@@ -1,0 +1,287 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["MyOrders"];
+}
+
+<section class="container section-space">
+    <div class="cart-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>@L["MyOrders"]</h2>
+            <a asp-action="Shop" class="text-link">@L["ContinueShopping"]</a>
+        </div>
+
+        <div id="ordersLoading" class="skeleton-stack">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-block"></div>
+            <div class="skeleton-block"></div>
+        </div>
+
+        <div id="ordersEmpty" class="empty-state" style="display:none;">
+            <i class="fas fa-receipt empty-icon"></i>
+            <p>@L["YouHaveNoOrdersYet"]</p>
+            <a asp-action="Shop" class="btn-minimal">@L["ShopNow"]</a>
+        </div>
+
+        <div id="ordersContent" style="display:none;"></div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var t = {
+            cancelOrder: '@L["CancelOrder"]',
+            uploadReceipt: '@L["UploadReceipt"]',
+            repayWithVnPay: '@L["RepayWithVnPay"]',
+            repayViaQr: '@L["RepayViaQr"]',
+            viewReceipt: '@L["ViewReceipt"]',
+            orderPrefix: '@L["OrderPrefix"]',
+            created: '@L["Created"]',
+            items: '@L["Items"]',
+            total: '@L["Total"]',
+            signInToViewOrders: '@L["SignInToViewOrders"]',
+            unableToLoadOrders: '@L["UnableToLoadOrders"]',
+            cancelling: '@L["Cancelling"]',
+            unableToCancelOrder: '@L["UnableToCancelOrder"]',
+            orderCancelled: '@L["OrderCancelled"]',
+            orderCancellationFailed: '@L["OrderCancellationFailed"]',
+            processing: '@L["Processing"]',
+            unableToRetryPayment: '@L["UnableToRetryPayment"]',
+            repaymentFailed: '@L["RepaymentFailed"]',
+            uploadingReceipt: '@L["UploadingReceipt"]',
+            unableToUploadReceipt: '@L["UnableToUploadReceipt"]',
+            receiptUploaded: '@L["ReceiptUploaded"]',
+            receiptUploadFailed: '@L["ReceiptUploadFailed"]',
+            timelinePlaced: '@L["OrderTimelinePlaced"]',
+            timelinePendingPayment: '@L["OrderTimelinePendingPayment"]',
+            timelineProcessing: '@L["OrderTimelineProcessing"]',
+            timelineShipping: '@L["OrderTimelineShipping"]',
+            timelineCompleted: '@L["OrderTimelineCompleted"]'
+        };
+
+        var loadingEl = document.getElementById('ordersLoading');
+        var emptyEl = document.getElementById('ordersEmpty');
+        var contentEl = document.getElementById('ordersContent');
+
+        function statusBadge(status) {
+            var map = {
+                pending: 'status-pending',
+                pendingpayment: 'status-pending-payment',
+                pendingtransfer: 'status-pending-transfer',
+                transfersubmitted: 'status-transfer-submitted',
+                paid: 'status-paid',
+                paymentfailed: 'status-payment-failed',
+                shipping: 'status-shipping',
+                completed: 'status-completed',
+                cancelled: 'status-cancelled'
+            };
+            var key = (status || '').toLowerCase();
+            var badgeClass = map[key] || 'status-default';
+            var statusTextMap = {
+                pending: '@L["StatusPending"]',
+                pendingpayment: '@L["StatusPendingPayment"]',
+                pendingtransfer: '@L["StatusPendingTransfer"]',
+                transfersubmitted: '@L["StatusTransferSubmitted"]',
+                paid: '@L["StatusPaid"]',
+                paymentfailed: '@L["StatusPaymentFailed"]',
+                shipping: '@L["StatusShipping"]',
+                completed: '@L["StatusCompleted"]',
+                cancelled: '@L["StatusCancelled"]'
+            };
+            var displayText = statusTextMap[key] || status;
+            return '<span class="order-status-badge ' + badgeClass + '">' + displayText + '</span>';
+        }
+
+        function timelineStepIndex(status) {
+            var key = (status || '').toLowerCase();
+            if (key === 'cancelled' || key === 'paymentfailed') return 1;
+            if (key === 'pending' || key === 'pendingpayment' || key === 'pendingtransfer' || key === 'transfersubmitted') return 2;
+            if (key === 'paid') return 3;
+            if (key === 'shipping') return 4;
+            if (key === 'completed') return 5;
+            return 1;
+        }
+
+        function renderTimeline(status) {
+            var current = timelineStepIndex(status);
+            var labels = [
+                t.timelinePlaced,
+                t.timelinePendingPayment,
+                t.timelineProcessing,
+                t.timelineShipping,
+                t.timelineCompleted
+            ];
+
+            return '<div class="order-timeline">' + labels.map(function (label, idx) {
+                var step = idx + 1;
+                var activeClass = current >= step ? 'is-active' : '';
+                return '<div class="order-timeline-step ' + activeClass + '"><span>' + label + '</span></div>';
+            }).join('') + '</div>';
+        }
+
+        function renderOrders(orders) {
+            if (!orders || !orders.length) {
+                emptyEl.style.display = 'flex';
+                contentEl.style.display = 'none';
+                return;
+            }
+
+            contentEl.innerHTML = orders.map(function (o) {
+                var items = (o.items || []).map(function (i) {
+                    return '<li style="margin:4px 0;">' + i.productName + ' x ' + i.quantity + ' - ' + Number(i.unitPrice || 0).toLocaleString('en-US') + ' VND</li>';
+                }).join('');
+
+                var lowerStatus = (o.status || '').toLowerCase();
+                var canCancel = lowerStatus === 'pending' || lowerStatus === 'pendingpayment' || lowerStatus === 'pendingtransfer';
+                var cancelBtn = canCancel
+                    ? '<button class="btn-minimal cancel-order-btn" data-order-id="' + o.shopOrderId + '">' + t.cancelOrder + '</button>'
+                    : '';
+
+                var canUploadProof = lowerStatus === 'pendingtransfer' || lowerStatus === 'transfersubmitted';
+                var uploadProofBtn = canUploadProof
+                    ? '<button class="btn-minimal upload-proof-btn" data-order-id="' + o.shopOrderId + '">' + t.uploadReceipt + '</button>'
+                    : '';
+
+                var canRepay = lowerStatus === 'pendingpayment' || lowerStatus === 'paymentfailed' || lowerStatus === 'pendingtransfer' || lowerStatus === 'transfersubmitted';
+                var repayButtons = canRepay
+                                        ? '<button class="btn-minimal repay-btn" data-order-id="' + o.shopOrderId + '" data-method="vnpay">' + t.repayWithVnPay + '</button>' +
+                                            '<button class="btn-minimal repay-btn" data-order-id="' + o.shopOrderId + '" data-method="bankqr">' + t.repayViaQr + '</button>'
+                    : '';
+
+                var proofLink = o.transferProofUrl
+                    ? '<a class="order-proof-link" href="http://localhost:5181' + o.transferProofUrl + '" target="_blank" rel="noreferrer">' + t.viewReceipt + '</a>'
+                    : '';
+
+                return '<article class="cart-summary my-order-card">' +
+                    '<div class="cart-total-row"><strong>' + t.orderPrefix + ' #' + o.shopOrderId + '</strong>' + statusBadge(o.status) + '</div>' +
+                    renderTimeline(o.status) +
+                    '<div class="cart-total-row"><span>' + t.created + ':</span><span>' + new Date(o.createdAt).toLocaleString() + '</span></div>' +
+                    '<div class="cart-total-row"><span>' + t.items + ':</span><span>' + (o.itemCount || 0) + '</span></div>' +
+                    '<div class="cart-total-row"><span>' + t.total + ':</span><span><strong>' + Number(o.totalAmount || 0).toLocaleString('en-US') + ' VND</strong></span></div>' +
+                    '<ul class="order-item-list">' + items + '</ul>' +
+                    '<div class="order-action-row">' + cancelBtn + uploadProofBtn + repayButtons + proofLink + '</div>' +
+                    '</article>';
+            }).join('');
+
+            contentEl.style.display = 'block';
+            emptyEl.style.display = 'none';
+        }
+
+        function loadOrders() {
+            fetch('/Product/GetMyOrders')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    loadingEl.style.display = 'none';
+
+                    if (data.requireLogin) {
+                        emptyEl.style.display = 'flex';
+                        emptyEl.querySelector('p').textContent = t.signInToViewOrders;
+                        return;
+                    }
+
+                    var orders = Array.isArray(data) ? data : (data.items || []);
+                    renderOrders(orders);
+                })
+                .catch(function () {
+                    loadingEl.style.display = 'none';
+                    emptyEl.style.display = 'flex';
+                    emptyEl.querySelector('p').textContent = t.unableToLoadOrders;
+                });
+        }
+
+        contentEl.addEventListener('click', function (e) {
+            var btn = e.target.closest('.cancel-order-btn');
+            if (btn) {
+                var orderId = btn.dataset.orderId;
+                btn.disabled = true;
+                btn.textContent = t.cancelling;
+                fetch('/Product/CancelOrder?orderId=' + encodeURIComponent(orderId), { method: 'POST' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.success) {
+                            if (window.showToast) window.showToast(data.message || t.unableToCancelOrder, 'error');
+                            return;
+                        }
+                        if (window.showToast) window.showToast(data.message || t.orderCancelled, 'success');
+                        loadOrders();
+                    })
+                    .catch(function () {
+                        if (window.showToast) window.showToast(t.orderCancellationFailed, 'error');
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.textContent = t.cancelOrder;
+                    });
+                return;
+            }
+
+            var repayBtn = e.target.closest('.repay-btn');
+            if (repayBtn) {
+                var repayOrderId = repayBtn.dataset.orderId;
+                var method = repayBtn.dataset.method || 'vnpay';
+                repayBtn.disabled = true;
+                repayBtn.textContent = t.processing;
+                fetch('/Product/RepayOrder?orderId=' + encodeURIComponent(repayOrderId) + '&paymentMethod=' + encodeURIComponent(method), { method: 'POST' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.success) {
+                            if (window.showToast) window.showToast(data.message || t.unableToRetryPayment, 'error');
+                            return;
+                        }
+
+                        if (data.paymentRequired && data.paymentMethod === 'vnpay' && data.paymentUrl) {
+                            window.location.href = data.paymentUrl;
+                            return;
+                        }
+
+                        if (data.paymentRequired && data.paymentMethod === 'bankqr' && data.clientRedirectUrl) {
+                            window.location.href = data.clientRedirectUrl;
+                            return;
+                        }
+
+                        loadOrders();
+                    })
+                    .catch(function () {
+                        if (window.showToast) window.showToast(t.repaymentFailed, 'error');
+                    })
+                    .finally(function () {
+                        repayBtn.disabled = false;
+                        repayBtn.textContent = method === 'bankqr' ? t.repayViaQr : t.repayWithVnPay;
+                    });
+                return;
+            }
+
+            var uploadBtn = e.target.closest('.upload-proof-btn');
+            if (uploadBtn) {
+                var uploadOrderId = uploadBtn.dataset.orderId;
+                var fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.onchange = function () {
+                    if (!fileInput.files || fileInput.files.length === 0) return;
+                    if (window.showToast) window.showToast(t.uploadingReceipt, 'info');
+                    var form = new FormData();
+                    form.append('orderId', uploadOrderId);
+                    form.append('proofImage', fileInput.files[0]);
+                    fetch('/Product/UploadTransferProof', { method: 'POST', body: form })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (!data.success) {
+                                if (window.showToast) window.showToast(data.message || t.unableToUploadReceipt, 'error');
+                                return;
+                            }
+                            if (window.showToast) window.showToast(data.message || t.receiptUploaded, 'success');
+                            loadOrders();
+                        })
+                        .catch(function () {
+                            if (window.showToast) window.showToast(t.receiptUploadFailed, 'error');
+                        });
+                };
+                fileInput.click();
+            }
+        });
+
+        loadOrders();
+    })();
+</script>
+}

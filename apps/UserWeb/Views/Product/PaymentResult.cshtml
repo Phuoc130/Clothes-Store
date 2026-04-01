@@ -1,0 +1,88 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["PaymentResult"];
+    var orderId = ViewBag.OrderId as int?;
+    var status = (ViewBag.Status as string) ?? L["Unknown"].Value;
+    var message = (ViewBag.Message as string) ?? L["NoTransactionInfo"].Value;
+
+    var isSuccess = string.Equals(status, "Paid", StringComparison.OrdinalIgnoreCase);
+    var statusClass = isSuccess ? "is-success" : "is-failed";
+    var title = isSuccess ? L["PaymentSuccessful"].Value : L["PaymentUnsuccessful"].Value;
+}
+
+<section class="container section-space">
+    <div class="cart-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>@L["PaymentResult"]</h2>
+            <a asp-action="MyOrders" class="text-link">@L["ViewMyOrders"]</a>
+        </div>
+
+        <article class="cart-summary payment-result-card @statusClass">
+            <div class="cart-total-row payment-result-title">
+                <strong>@title</strong>
+            </div>
+            <div class="cart-total-row payment-result-row">
+                <span>@L["Order"]:</span>
+                <span>#@(orderId?.ToString() ?? L["NotAvailable"].Value)</span>
+            </div>
+            <div class="cart-total-row payment-result-row">
+                <span>@L["Status"]:</span>
+                <span>@status</span>
+            </div>
+            <div class="cart-total-row payment-result-row">
+                <span>@L["Message"]:</span>
+                <span>@message</span>
+            </div>
+
+            <div class="payment-result-actions">
+                @if (!isSuccess && orderId.HasValue && orderId.Value > 0)
+                {
+                    <button id="retryVnPayBtn" class="btn-minimal" type="button" data-order-id="@orderId.Value">@L["TryPayAgain"]</button>
+                }
+                <a asp-action="MyOrders" class="btn-minimal">@L["MyOrders"]</a>
+                <a asp-action="Cart" class="btn-minimal">@L["BackToCart"]</a>
+                <a asp-action="Shop" class="btn-minimal">@L["ContinueShopping"]</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var retryBtn = document.getElementById('retryVnPayBtn');
+        if (!retryBtn) return;
+
+        retryBtn.addEventListener('click', function () {
+            var orderId = retryBtn.dataset.orderId;
+            if (!orderId) return;
+
+            retryBtn.disabled = true;
+            retryBtn.textContent = '@L["Processing"]';
+
+            fetch('/Product/RepayOrder?orderId=' + encodeURIComponent(orderId) + '&paymentMethod=vnpay', { method: 'POST' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success) {
+                        if (window.showToast) window.showToast(data.message || '@L["UnableToRetryPayment"]', 'error');
+                        return;
+                    }
+
+                    if (data.paymentRequired && data.paymentUrl) {
+                        window.location.href = data.paymentUrl;
+                        return;
+                    }
+
+                    if (window.showToast) window.showToast('@L["UnableToRetryPayment"]', 'error');
+                })
+                .catch(function () {
+                    if (window.showToast) window.showToast('@L["RepaymentFailed"]', 'error');
+                })
+                .finally(function () {
+                    retryBtn.disabled = false;
+                    retryBtn.textContent = '@L["TryPayAgain"]';
+                });
+        });
+    })();
+</script>
+}

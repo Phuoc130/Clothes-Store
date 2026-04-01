@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="BrandName" xml:space="preserve"><value>AURELIA ATELIER</value></data>
+  <data name="Men" xml:space="preserve"><value>Nam giới</value></data>
+  <data name="Women" xml:space="preserve"><value>Phụ nữ</value></data>
+  <data name="Collection" xml:space="preserve"><value>Bộ sưu tập</value></data>
+  <data name="Sale" xml:space="preserve"><value>Giảm giá</value></data>
+  <data name="MenPicks" xml:space="preserve"><value>Gợi ý nam</value></data>
+  <data name="WomenPicks" xml:space="preserve"><value>Gợi ý nữ</value></data>
+  <data name="StyleNotes" xml:space="preserve"><value>Gợi ý phong cách</value></data>
+  <data name="Editorial" xml:space="preserve"><value>Biên tập</value></data>
+  <data name="Shirts" xml:space="preserve"><value>Áo sơ mi</value></data>
+  <data name="Pants" xml:space="preserve"><value>Quần</value></data>
+  <data name="Jackets" xml:space="preserve"><value>Áo khoác</value></data>
+  <data name="Dresses" xml:space="preserve"><value>Đầm</value></data>
+  <data name="Tops" xml:space="preserve"><value>Áo</value></data>
+  <data name="Skirts" xml:space="preserve"><value>Chân váy</value></data>
+  <data name="MenStyleNoteText" xml:space="preserve"><value>Phom dáng tối giản, chất liệu thoáng mát cho nhịp sống đô thị hiện đại.</value></data>
+  <data name="WomenStyleNoteText" xml:space="preserve"><value>Đường nét mềm mại, chi tiết hiện đại và bảng màu trung tính vượt thời gian.</value></data>
+  <data name="SearchProduct" xml:space="preserve"><value>Tìm kiếm sản phẩm...</value></data>
+  <data name="SwitchTheme" xml:space="preserve"><value>Đổi giao diện</value></data>
+  <data name="Home" xml:space="preserve"><value>Trang chủ</value></data>
+  <data name="Close" xml:space="preserve"><value>Đóng</value></data>
+  <data name="Language" xml:space="preserve"><value>Ngôn ngữ</value></data>
+  <data name="LanguageVietnamese" xml:space="preserve"><value>Tiếng Việt</value></data>
+  <data name="LanguageEnglish" xml:space="preserve"><value>Tiếng Anh</value></data>
+  <data name="Cart" xml:space="preserve"><value>Giỏ hàng</value></data>
+  <data name="MyOrders" xml:space="preserve"><value>Đơn hàng của tôi</value></data>
+  <data name="Wishlist" xml:space="preserve"><value>Yêu thích</value></data>
+  <data name="Logout" xml:space="preserve"><value>Đăng xuất</value></data>
+  <data name="Login" xml:space="preserve"><value>Đăng nhập</value></data>
+  <data name="Register" xml:space="preserve"><value>Đăng ký</value></data>
+  <data name="AdminSite" xml:space="preserve"><value>Trang quản trị</value></data>
+  <data name="QuickCart" xml:space="preserve"><value>Giỏ hàng nhanh</value></data>
+  <data name="LoadingCart" xml:space="preserve"><value>Đang tải giỏ hàng...</value></data>
+  <data name="ViewFullCart" xml:space="preserve"><value>Xem giỏ hàng đầy đủ</value></data>
+  <data name="About" xml:space="preserve"><value>Giới thiệu</value></data>
+  <data name="Contact" xml:space="preserve"><value>Liên hệ</value></data>
+  <data name="PrivacyPolicy" xml:space="preserve"><value>Chính sách bảo mật</value></data>
+  <data name="ReturnPolicy" xml:space="preserve"><value>Chính sách đổi trả</value></data>
+  <data name="Payments" xml:space="preserve"><value>Thanh toán</value></data>
+
+  <data name="ShopTitle" xml:space="preserve"><value>Cửa hàng</value></data>
+  <data name="SearchName" xml:space="preserve"><value>Tìm kiếm</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Nhập tên sản phẩm...</value></data>
+  <data name="Search" xml:space="preserve"><value>Tìm</value></data>
+  <data name="Clear" xml:space="preserve"><value>Xóa</value></data>
+  <data name="Category" xml:space="preserve"><value>Danh mục</value></data>
+  <data name="All" xml:space="preserve"><value>Tất cả</value></data>
+  <data name="Size" xml:space="preserve"><value>Kích cỡ</value></data>
+  <data name="Price" xml:space="preserve"><value>Giá</value></data>
+  <data name="Min" xml:space="preserve"><value>Tối thiểu</value></data>
+  <data name="Max" xml:space="preserve"><value>Tối đa</value></data>
+  <data name="Color" xml:space="preserve"><value>Màu sắc</value></data>
+  <data name="Sort" xml:space="preserve"><value>Sắp xếp</value></data>
+  <data name="Newest" xml:space="preserve"><value>Mới nhất</value></data>
+  <data name="PriceLowToHigh" xml:space="preserve"><value>Giá tăng dần</value></data>
+  <data name="PriceHighToLow" xml:space="preserve"><value>Giá giảm dần</value></data>
+  <data name="ApplyFilters" xml:space="preserve"><value>Áp dụng bộ lọc</value></data>
+  <data name="Products" xml:space="preserve"><value>Sản phẩm</value></data>
+  <data name="ShowingProductsFormat" xml:space="preserve"><value>Hiển thị {0} trên {1} sản phẩm</value></data>
+  <data name="Items" xml:space="preserve"><value>sản phẩm</value></data>
+  <data name="NoMatchingProducts" xml:space="preserve"><value>Không tìm thấy sản phẩm phù hợp với bộ lọc.</value></data>
+  <data name="QuickView" xml:space="preserve"><value>Xem nhanh</value></data>
+  <data name="AddToWishlist" xml:space="preserve"><value>Thêm vào yêu thích</value></data>
+  <data name="AddToCart" xml:space="preserve"><value>Thêm vào giỏ</value></data>
+  <data name="FilteringProducts" xml:space="preserve"><value>Đang lọc sản phẩm...</value></data>
+  <data name="LoadMore" xml:space="preserve"><value>Xem thêm</value></data>
+  <data name="FiltersUpdated" xml:space="preserve"><value>Đã cập nhật danh sách sản phẩm.</value></data>
+  <data name="FilterLoadFailed" xml:space="preserve"><value>Không thể tải dữ liệu lọc.</value></data>
+  <data name="ServerConnectFailed" xml:space="preserve"><value>Không thể kết nối máy chủ.</value></data>
+  <data name="FiltersCleared" xml:space="preserve"><value>Đã xóa bộ lọc.</value></data>
+  <data name="clothesstore" xml:space="preserve"><value>Cửa hàng quần áo</value></data>
+  <data name="HomeHeroEyebrow" xml:space="preserve"><value>Bộ sưu tập mới</value></data>
+  <data name="HomeHeroTitle" xml:space="preserve"><value>Xuân 2026</value></data>
+  <data name="HomeShopNow" xml:space="preserve"><value>Mua ngay</value></data>
+  <data name="HomeDiscover" xml:space="preserve"><value>Khám phá</value></data>
+  <data name="HomeDiscoverAria" xml:space="preserve"><value>Cuộn tới khu vực mua sắm</value></data>
+  <data name="HomeCategories" xml:space="preserve"><value>Danh mục</value></data>
+  <data name="HomeMenCollectionAlt" xml:space="preserve"><value>Bộ sưu tập nam</value></data>
+  <data name="HomeWomenCollectionAlt" xml:space="preserve"><value>Bộ sưu tập nữ</value></data>
+  <data name="HomeAccessoriesCollectionAlt" xml:space="preserve"><value>Bộ sưu tập phụ kiện</value></data>
+  <data name="HomeShopMen" xml:space="preserve"><value>Mua đồ nam</value></data>
+  <data name="HomeShopWomen" xml:space="preserve"><value>Mua đồ nữ</value></data>
+  <data name="HomeShopAccessories" xml:space="preserve"><value>Mua phụ kiện</value></data>
+  <data name="HomeFeaturedProducts" xml:space="preserve"><value>Sản phẩm nổi bật</value></data>
+  <data name="HomeViewAll" xml:space="preserve"><value>Xem tất cả</value></data>
+  <data name="HomeNoFeaturedProducts" xml:space="preserve"><value>Hiện chưa có sản phẩm nổi bật.</value></data>
+  <data name="HomeClientNotes" xml:space="preserve"><value>Đánh giá khách hàng</value></data>
+  <data name="HomeRealBuyerReviews" xml:space="preserve"><value>Nhận xét từ người mua thật</value></data>
+  <data name="HomeTestimonial1" xml:space="preserve"><value>"Form lên rất sang, chất vải mịn và đứng phom. Nhận hàng còn đẹp hơn ảnh."</value></data>
+  <data name="HomeTestimonial1Author" xml:space="preserve"><value>Lan Anh - TP. Ho Chi Minh</value></data>
+  <data name="HomeTestimonial2" xml:space="preserve"><value>"Mua lần 3 rồi, giao nhanh và size chuẩn. Website mượt, đặt hàng cực nhanh."</value></data>
+  <data name="HomeTestimonial2Author" xml:space="preserve"><value>Minh Quan - Ha Noi</value></data>
+  <data name="HomeTestimonial3" xml:space="preserve"><value>"Mix đồ đi làm hay đi chơi đều hợp. Đặc biệt thích các mẫu tone trung tính."</value></data>
+  <data name="HomeTestimonial3Author" xml:space="preserve"><value>Thu Ha - Da Nang</value></data>
+  <data name="HomeTestimonialPaginationAria" xml:space="preserve"><value>Phan trang slider danh gia</value></data>
+  <data name="HomeInstagramLooks" xml:space="preserve"><value>Phong cach Instagram</value></data>
+  <data name="HomeInstagramAlt1" xml:space="preserve"><value>Anh Instagram 1</value></data>
+  <data name="HomeInstagramAlt2" xml:space="preserve"><value>Anh Instagram 2</value></data>
+  <data name="HomeInstagramAlt3" xml:space="preserve"><value>Anh Instagram 3</value></data>
+  <data name="HomeInstagramAlt4" xml:space="preserve"><value>Anh Instagram 4</value></data>
+  <data name="HomeNewsletterTitle" xml:space="preserve"><value>Tham gia danh sach uu tien</value></data>
+  <data name="HomeNewsletterSubtitle" xml:space="preserve"><value>Dang ky de nhan uu dai doc quyen va giam 10% cho don dau tien.</value></data>
+  <data name="HomeNewsletterToast" xml:space="preserve"><value>Dang ky thanh cong - vui long kiem tra email de nhan ma giam gia!</value></data>
+  <data name="HomeNewsletterPlaceholder" xml:space="preserve"><value>Nhap email cua ban</value></data>
+  <data name="HomeNewsletterButton" xml:space="preserve"><value>Nhan uu dai</value></data>
+  <data name="HomeCampaignLabel" xml:space="preserve"><value>Bo suu tap toi gian</value></data>
+  <data name="HomeExplore" xml:space="preserve"><value>Kham pha</value></data>
+  <data name="HomeBrandStoryTitle" xml:space="preserve"><value>Cau chuyen thuong hieu</value></data>
+  <data name="HomeBrandStoryText" xml:space="preserve"><value>Chung toi tao ra thoi trang toi gian cho loi song hien dai. Moi thiet ke de cao su ro rang, thoai mai va thanh lich moi ngay.</value></data>
+  <data name="HomeOpenAdminConsole" xml:space="preserve"><value>Mo trang quan tri</value></data>
+  <data name="CartPageTitle" xml:space="preserve"><value>Giỏ hàng của bạn</value></data>
+  <data name="ContinueShopping" xml:space="preserve"><value>Tiếp tục mua sắm</value></data>
+  <data name="CartEmpty" xml:space="preserve"><value>Giỏ hàng của bạn đang trống</value></data>
+  <data name="BackToShopping" xml:space="preserve"><value>Quay lại mua sắm</value></data>
+  <data name="Product" xml:space="preserve"><value>Sản phẩm</value></data>
+  <data name="UnitPrice" xml:space="preserve"><value>Đơn giá</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Số lượng</value></data>
+  <data name="Subtotal" xml:space="preserve"><value>Tạm tính</value></data>
+  <data name="Total" xml:space="preserve"><value>Tổng cộng</value></data>
+  <data name="CouponPlaceholder" xml:space="preserve"><value>Mã giảm giá (ví dụ: WELCOME10)</value></data>
+  <data name="PaymentCashOnDelivery" xml:space="preserve"><value>Thanh toán khi nhận hàng</value></data>
+  <data name="PaymentBankTransferQr" xml:space="preserve"><value>Chuyển khoản ngân hàng (VietQR)</value></data>
+  <data name="PaymentVnPayBankQr" xml:space="preserve"><value>VNPay (Ngân hàng/QR)</value></data>
+  <data name="PlaceOrder" xml:space="preserve"><value>Đặt hàng</value></data>
+  <data name="ProceedToCheckout" xml:space="preserve"><value>Tiếp tục thanh toán</value></data>
+  <data name="CheckoutTitle" xml:space="preserve"><value>Thanh toán đơn hàng</value></data>
+  <data name="ShippingInformation" xml:space="preserve"><value>Thông tin giao hàng</value></data>
+  <data name="FullName" xml:space="preserve"><value>Họ và tên</value></data>
+  <data name="PhoneNumber" xml:space="preserve"><value>Số điện thoại</value></data>
+  <data name="ProvinceCity" xml:space="preserve"><value>Tỉnh/Thành phố</value></data>
+  <data name="District" xml:space="preserve"><value>Quận/Huyện</value></data>
+  <data name="AddressLine" xml:space="preserve"><value>Địa chỉ cụ thể</value></data>
+  <data name="OrderNote" xml:space="preserve"><value>Ghi chú đơn hàng</value></data>
+  <data name="OrderSummary" xml:space="preserve"><value>Tóm tắt đơn hàng</value></data>
+  <data name="DiscountAmount" xml:space="preserve"><value>Giảm giá</value></data>
+  <data name="ShippingFee" xml:space="preserve"><value>Phí vận chuyển</value></data>
+  <data name="PleaseCompleteShippingInfo" xml:space="preserve"><value>Vui lòng điền đầy đủ thông tin giao hàng</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Thanh toán ngay</value></data>
+  <data name="RedirectingToCartForCheckout" xml:space="preserve"><value>Đang chuyển đến giỏ hàng để thanh toán...</value></data>
+  <data name="TryCodes" xml:space="preserve"><value>Thử mã: WELCOME10, SALE15, VIP20</value></data>
+  <data name="OrderTotal" xml:space="preserve"><value>Tổng đơn hàng</value></data>
+  <data name="SignInToViewCart" xml:space="preserve"><value>Vui lòng đăng nhập để xem giỏ hàng</value></data>
+  <data name="UnableToLoadCart" xml:space="preserve"><value>Không thể tải giỏ hàng</value></data>
+  <data name="Remove" xml:space="preserve"><value>Xóa</value></data>
+  <data name="CouponInvalid" xml:space="preserve"><value>Mã giảm giá không tồn tại hoặc đã hết hạn</value></data>
+  <data name="UnableToValidateCoupon" xml:space="preserve"><value>Không thể kiểm tra mã giảm giá</value></data>
+  <data name="Processing" xml:space="preserve"><value>Đang xử lý...</value></data>
+  <data name="MinimumQtyInfo" xml:space="preserve"><value>Số lượng tối thiểu là 1. Hãy dùng nút xóa để bỏ sản phẩm.</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Cập nhật thất bại</value></data>
+  <data name="RemovedFromCart" xml:space="preserve"><value>Đã xóa khỏi giỏ hàng</value></data>
+  <data name="DeleteFailed" xml:space="preserve"><value>Xóa thất bại</value></data>
+  <data name="SignInToPlaceOrder" xml:space="preserve"><value>Vui lòng đăng nhập để đặt hàng</value></data>
+  <data name="UnableToPlaceOrder" xml:space="preserve"><value>Không thể đặt hàng</value></data>
+  <data name="RedirectingToPaymentGateway" xml:space="preserve"><value>Đang chuyển đến cổng thanh toán...</value></data>
+  <data name="OpeningBankTransferQrPage" xml:space="preserve"><value>Đang mở trang QR chuyển khoản...</value></data>
+  <data name="DiscountAppliedPrefix" xml:space="preserve"><value>Áp dụng thành công - Giảm</value></data>
+  <data name="OrderPlacedSuccessfully" xml:space="preserve"><value>Đặt hàng thành công</value></data>
+  <data name="ConnectionErrorWhilePlacingOrder" xml:space="preserve"><value>Lỗi kết nối khi đặt hàng</value></data>
+  <data name="Thumbnail" xml:space="preserve"><value>Ảnh thu nhỏ</value></data>
+  <data name="YouMayAlsoLike" xml:space="preserve"><value>Có thể bạn cũng thích</value></data>
+  <data name="BackToShop" xml:space="preserve"><value>Quay lại cửa hàng</value></data>
+  <data name="PleaseSelectSizeBeforeAddingToCart" xml:space="preserve"><value>Vui lòng chọn size trước khi thêm vào giỏ hàng</value></data>
+  <data name="PleaseSelectSizeFirst" xml:space="preserve"><value>Vui lòng chọn size trước</value></data>
+  <data name="YouHaveNoOrdersYet" xml:space="preserve"><value>Bạn chưa có đơn hàng nào</value></data>
+  <data name="ShopNow" xml:space="preserve"><value>Mua ngay</value></data>
+  <data name="CancelOrder" xml:space="preserve"><value>Hủy đơn</value></data>
+  <data name="UploadReceipt" xml:space="preserve"><value>Tải biên lai</value></data>
+  <data name="RepayWithVnPay" xml:space="preserve"><value>Thanh toán lại bằng VNPay</value></data>
+  <data name="RepayViaQr" xml:space="preserve"><value>Thanh toán lại qua QR</value></data>
+  <data name="ViewReceipt" xml:space="preserve"><value>Xem biên lai</value></data>
+  <data name="OrderPrefix" xml:space="preserve"><value>Đơn</value></data>
+  <data name="Created" xml:space="preserve"><value>Tạo lúc</value></data>
+  <data name="SignInToViewOrders" xml:space="preserve"><value>Vui lòng đăng nhập để xem đơn hàng</value></data>
+  <data name="UnableToLoadOrders" xml:space="preserve"><value>Không thể tải đơn hàng</value></data>
+  <data name="Cancelling" xml:space="preserve"><value>Đang hủy...</value></data>
+  <data name="UnableToCancelOrder" xml:space="preserve"><value>Không thể hủy đơn</value></data>
+  <data name="OrderCancelled" xml:space="preserve"><value>Đã hủy đơn</value></data>
+  <data name="OrderCancellationFailed" xml:space="preserve"><value>Hủy đơn thất bại</value></data>
+  <data name="UnableToRetryPayment" xml:space="preserve"><value>Không thể thanh toán lại</value></data>
+  <data name="RepaymentFailed" xml:space="preserve"><value>Thanh toán lại thất bại</value></data>
+  <data name="UploadingReceipt" xml:space="preserve"><value>Đang tải biên lai...</value></data>
+  <data name="UnableToUploadReceipt" xml:space="preserve"><value>Không thể tải biên lai</value></data>
+  <data name="ReceiptUploaded" xml:space="preserve"><value>Đã tải biên lai</value></data>
+  <data name="ReceiptUploadFailed" xml:space="preserve"><value>Tải biên lai thất bại</value></data>
+  <data name="StatusPending" xml:space="preserve"><value>Chờ xử lý</value></data>
+  <data name="StatusPendingPayment" xml:space="preserve"><value>Chờ thanh toán</value></data>
+  <data name="StatusPendingTransfer" xml:space="preserve"><value>Chờ chuyển khoản</value></data>
+  <data name="StatusTransferSubmitted" xml:space="preserve"><value>Đã gửi thông tin chuyển khoản</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Đã thanh toán</value></data>
+  <data name="StatusPaymentFailed" xml:space="preserve"><value>Thanh toán thất bại</value></data>
+  <data name="StatusShipping" xml:space="preserve"><value>Đang giao hàng</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Hoàn thành</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Đã hủy</value></data>
+  <data name="WishlistItems" xml:space="preserve"><value>Sản phẩm yêu thích</value></data>
+  <data name="NoWishlistItemsYet" xml:space="preserve"><value>Chưa có sản phẩm yêu thích</value></data>
+  <data name="ExploreProducts" xml:space="preserve"><value>Khám phá sản phẩm</value></data>
+  <data name="SignInToViewWishlist" xml:space="preserve"><value>Vui lòng đăng nhập để xem danh sách yêu thích</value></data>
+  <data name="UnableToLoadWishlist" xml:space="preserve"><value>Không thể tải danh sách yêu thích</value></data>
+  <data name="RemoveFromWishlist" xml:space="preserve"><value>Xóa khỏi yêu thích</value></data>
+  <data name="BankTransferPayment" xml:space="preserve"><value>Thanh toán chuyển khoản</value></data>
+  <data name="OrderId" xml:space="preserve"><value>Mã đơn hàng</value></data>
+  <data name="Bank" xml:space="preserve"><value>Ngân hàng</value></data>
+  <data name="AccountNumber" xml:space="preserve"><value>Số tài khoản</value></data>
+  <data name="AccountName" xml:space="preserve"><value>Tên tài khoản</value></data>
+  <data name="TransferNote" xml:space="preserve"><value>Nội dung chuyển khoản</value></data>
+  <data name="CopyAccountNumber" xml:space="preserve"><value>Sao chép số tài khoản</value></data>
+  <data name="CopyTransferNote" xml:space="preserve"><value>Sao chép nội dung</value></data>
+  <data name="ScanQrToPay" xml:space="preserve"><value>Quét mã QR bên dưới bằng ứng dụng ngân hàng để thanh toán:</value></data>
+  <data name="VietQrPayment" xml:space="preserve"><value>Thanh toán VietQR</value></data>
+  <data name="CouldNotGenerateQr" xml:space="preserve"><value>Không thể tạo mã QR. Vui lòng quay lại giỏ hàng và thử lại.</value></data>
+  <data name="UploadReceiptImageRecommended" xml:space="preserve"><value>Tải ảnh biên lai (khuyến nghị)</value></data>
+  <data name="DragDropReceiptHere" xml:space="preserve"><value>Kéo thả biên lai vào đây</value></data>
+  <data name="OrClickChooseImage" xml:space="preserve"><value>hoặc bấm để chọn ảnh</value></data>
+  <data name="NoFileSelected" xml:space="preserve"><value>Chưa chọn tệp</value></data>
+  <data name="IHaveTransferred" xml:space="preserve"><value>Tôi đã chuyển khoản</value></data>
+  <data name="BackToCart" xml:space="preserve"><value>Quay lại giỏ hàng</value></data>
+  <data name="ConfirmationSuccessful" xml:space="preserve"><value>Xác nhận thành công</value></data>
+  <data name="TransferReceivedConfirmSoon" xml:space="preserve"><value>Chúng tôi đã nhận thông tin chuyển khoản của bạn. Đơn hàng sẽ sớm được xác nhận.</value></data>
+  <data name="ViewMyOrders" xml:space="preserve"><value>Xem đơn hàng của tôi</value></data>
+  <data name="UnableToCopy" xml:space="preserve"><value>Không thể sao chép</value></data>
+  <data name="AccountNumberCopied" xml:space="preserve"><value>Đã sao chép số tài khoản</value></data>
+  <data name="TransferNoteCopied" xml:space="preserve"><value>Đã sao chép nội dung chuyển khoản</value></data>
+  <data name="UnableToSubmitConfirmation" xml:space="preserve"><value>Không thể gửi xác nhận</value></data>
+  <data name="TransferConfirmationSubmitted" xml:space="preserve"><value>Đã gửi xác nhận chuyển khoản</value></data>
+  <data name="VerifyingTransfer" xml:space="preserve"><value>Đang kiểm tra giao dịch...</value></data>
+  <data name="CopiedSuccessfully" xml:space="preserve"><value>Đã sao chép!</value></data>
+  <data name="ConnectionError" xml:space="preserve"><value>Lỗi kết nối</value></data>
+  <data name="ThankYouForYourPurchase" xml:space="preserve"><value>Cảm ơn bạn đã mua hàng. Chúng tôi đã nhận xác nhận chuyển khoản và sẽ xử lý đơn sớm nhất.</value></data>
+  <data name="PaymentResult" xml:space="preserve"><value>Kết quả thanh toán</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Không xác định</value></data>
+  <data name="NoTransactionInfo" xml:space="preserve"><value>Không có thông tin giao dịch</value></data>
+  <data name="PaymentSuccessful" xml:space="preserve"><value>Thanh toán thành công</value></data>
+  <data name="PaymentUnsuccessful" xml:space="preserve"><value>Thanh toán không thành công</value></data>
+  <data name="TryPayAgain" xml:space="preserve"><value>Thử thanh toán lại</value></data>
+  <data name="OrderSuccessTitle" xml:space="preserve"><value>Đặt hàng thành công</value></data>
+  <data name="OrderSuccessMessage" xml:space="preserve"><value>Đơn hàng của bạn đã được ghi nhận. Chúng tôi sẽ xử lý và giao sớm nhất.</value></data>
+  <data name="OrderTimelinePlaced" xml:space="preserve"><value>Đặt hàng</value></data>
+  <data name="OrderTimelinePendingPayment" xml:space="preserve"><value>Chờ thanh toán</value></data>
+  <data name="OrderTimelineProcessing" xml:space="preserve"><value>Đang xử lý</value></data>
+  <data name="OrderTimelineShipping" xml:space="preserve"><value>Đang giao</value></data>
+  <data name="OrderTimelineCompleted" xml:space="preserve"><value>Hoàn thành</value></data>
+  <data name="Order" xml:space="preserve"><value>Đơn hàng</value></data>
+  <data name="Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Message" xml:space="preserve"><value>Thông báo</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>Không có</value></data>
+  <data name="LoginSubtitle" xml:space="preserve"><value>Đăng nhập để theo dõi đơn hàng và thanh toán nhanh hơn.</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Password" xml:space="preserve"><value>Mật khẩu</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Tạo tài khoản</value></data>
+  <data name="RegisterSubtitle" xml:space="preserve"><value>Tạo tài khoản để lưu giỏ hàng và quản lý đơn hàng.</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Xác nhận mật khẩu</value></data>
+  <data name="BackToLogin" xml:space="preserve"><value>Quay lại đăng nhập</value></data>
+  <data name="Hot" xml:space="preserve"><value>Nổi bật</value></data>
+  <data name="Account" xml:space="preserve"><value>Tài khoản</value></data>
+</root>

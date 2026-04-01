@@ -1,0 +1,165 @@
+@model IEnumerable<Product>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["HomeHeroTitle"];
+}
+
+<section class="hero-banner reveal-on-scroll">
+    <div class="hero-overlay"></div>
+    <div class="hero-grain"></div>
+    <div class="hero-orb orb-left" aria-hidden="true"></div>
+    <div class="hero-orb orb-right" aria-hidden="true"></div>
+    <div class="hero-content">
+        <p class="hero-eyebrow">@L["HomeHeroEyebrow"]</p>
+        <h1>@L["HomeHeroTitle"]</h1>
+        <a asp-controller="Product" asp-action="Shop" class="cta-btn btn-brand">
+            <i class="fas fa-sparkles" aria-hidden="true"></i>
+            <span>@L["HomeShopNow"]</span>
+        </a>
+        <a asp-controller="Product" asp-action="Shop" class="hero-scroll-hint" aria-label="@L["HomeDiscoverAria"]">
+            <span>@L["HomeDiscover"]</span>
+            <i class="fas fa-arrow-down"></i>
+        </a>
+    </div>
+</section>
+
+<section class="section-space container reveal-on-scroll">
+    <div class="section-header">
+        <h2>@L["HomeCategories"]</h2>
+    </div>
+    <div class="category-grid">
+        <a class="category-card stagger-item" asp-controller="Product" asp-action="Shop" asp-route-category="Men">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1400&auto=format&fit=crop" alt="@L["HomeMenCollectionAlt"]" />
+            <span>@L["HomeShopMen"]</span>
+        </a>
+        <a class="category-card stagger-item" asp-controller="Product" asp-action="Shop" asp-route-category="Women">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400&auto=format&fit=crop" alt="@L["HomeWomenCollectionAlt"]" />
+            <span>@L["HomeShopWomen"]</span>
+        </a>
+        <a class="category-card stagger-item" asp-controller="Product" asp-action="Shop" asp-route-category="Accessories">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1400&auto=format&fit=crop" alt="@L["HomeAccessoriesCollectionAlt"]" />
+            <span>@L["HomeShopAccessories"]</span>
+        </a>
+    </div>
+</section>
+
+<section class="section-space container reveal-on-scroll">
+    <div class="section-header split">
+        <h2>@L["HomeFeaturedProducts"]</h2>
+        <a asp-controller="Product" asp-action="Shop" class="text-link">@L["HomeViewAll"]</a>
+    </div>
+    <div class="featured-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var p in Model)
+            {
+                var frontImage = string.IsNullOrWhiteSpace(p.ImageUrl)
+                    ? "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1200&auto=format&fit=crop"
+                    : p.ImageUrl;
+                var backImage = string.IsNullOrWhiteSpace(p.HoverImageUrl)
+                    ? frontImage
+                    : p.HoverImageUrl;
+                var hasDiscount = p.DiscountPercent.HasValue && p.DiscountPercent.Value > 0;
+                var originPrice = p.Price.ToString("N0") + " VND";
+
+                <article class="product-item stagger-item">
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@p.Product_ID" class="product-image-wrap">
+                        @if (hasDiscount)
+                        {
+                            <span class="product-badge discount">-@decimal.Round(p.DiscountPercent!.Value, 0)%</span>
+                        }
+                        <img loading="lazy" class="product-front" src="@frontImage" alt="@p.Name" />
+                        <img loading="lazy" class="product-hover" src="@backImage" alt="@p.Name alternate" />
+                    </a>
+                    <div class="product-meta">
+                        <h3>@p.Name</h3>
+                        @if (hasDiscount)
+                        {
+                            <p><span class="price-current">@p.PriceDisplay</span> <span class="price-original">@originPrice</span></p>
+                        }
+                        else
+                        {
+                            <p><span class="price-current">@p.PriceDisplay</span></p>
+                        }
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <p>@L["HomeNoFeaturedProducts"]</p>
+        }
+    </div>
+</section>
+
+<section class="section-space container reveal-on-scroll">
+    <div class="section-header split">
+        <h2>@L["HomeClientNotes"]</h2>
+        <span class="text-link">@L["HomeRealBuyerReviews"]</span>
+    </div>
+    <div class="testimonials-slider" data-auto-slider="testimonials">
+        <div class="testimonials-track">
+            <article class="testimonial-card">
+                <p>@L["HomeTestimonial1"]</p>
+                <span>@L["HomeTestimonial1Author"]</span>
+            </article>
+            <article class="testimonial-card">
+                <p>@L["HomeTestimonial2"]</p>
+                <span>@L["HomeTestimonial2Author"]</span>
+            </article>
+            <article class="testimonial-card">
+                <p>@L["HomeTestimonial3"]</p>
+                <span>@L["HomeTestimonial3Author"]</span>
+            </article>
+        </div>
+        <div class="testimonials-dots" aria-label="@L["HomeTestimonialPaginationAria"]"></div>
+    </div>
+</section>
+
+<section class="section-space container reveal-on-scroll">
+    <div class="section-header split">
+        <h2>@L["HomeInstagramLooks"]</h2>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer" class="text-link">@@clothesstore</a>
+    </div>
+    <div class="instagram-grid">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=900&auto=format&fit=crop" alt="@L["HomeInstagramAlt1"]" />
+        <img loading="lazy" src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=900&auto=format&fit=crop" alt="@L["HomeInstagramAlt2"]" />
+        <img loading="lazy" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=900&auto=format&fit=crop" alt="@L["HomeInstagramAlt3"]" />
+        <img loading="lazy" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=900&auto=format&fit=crop" alt="@L["HomeInstagramAlt4"]" />
+    </div>
+</section>
+
+<section class="section-space container reveal-on-scroll">
+    <div class="newsletter-band">
+        <div>
+            <h3>@L["HomeNewsletterTitle"]</h3>
+            <p>@L["HomeNewsletterSubtitle"]</p>
+        </div>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); if(window.showToast) window.showToast('@L["HomeNewsletterToast"]', 'success'); this.reset();">
+            <input type="email" placeholder="@L["HomeNewsletterPlaceholder"]" required />
+            <button type="submit" class="btn-minimal">@L["HomeNewsletterButton"]</button>
+        </form>
+    </div>
+</section>
+
+<section class="campaign-banner reveal-on-scroll">
+    <div class="campaign-overlay"></div>
+    <div class="campaign-content">
+        <p>@L["HomeCampaignLabel"]</p>
+        <a asp-controller="Product" asp-action="Shop" class="cta-btn cta-btn-light btn-brand">
+            <i class="fas fa-compass" aria-hidden="true"></i>
+            <span>@L["HomeExplore"]</span>
+        </a>
+    </div>
+</section>
+
+<section class="section-space section-narrow reveal-on-scroll">
+    <div class="brand-story">
+        <h2>@L["HomeBrandStoryTitle"]</h2>
+        <p>@L["HomeBrandStoryText"]</p>
+        <a href="http://localhost:5019" class="text-link">@L["HomeOpenAdminConsole"]</a>
+    </div>
+</section>
+
+
+

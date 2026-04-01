@@ -1,0 +1,280 @@
+@model AdminWeb.Views.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Tong quan quan tri";
+
+    string StatusClass(string? status)
+    {
+        return (status ?? string.Empty).ToLowerInvariant() switch
+        {
+            "pending" => "status-pending",
+            "pendingpayment" => "status-pending-payment",
+            "pendingtransfer" => "status-pending-transfer",
+            "transfersubmitted" => "status-transfer-submitted",
+            "paid" => "status-paid",
+            "paymentfailed" => "status-payment-failed",
+            "shipping" => "status-shipping",
+            "completed" => "status-completed",
+            "cancelled" => "status-cancelled",
+            _ => "status-default"
+        };
+    }
+}
+
+<section class="container section-space admin-shell">
+    <aside class="admin-sidebar reveal-on-scroll">
+        <p class="admin-brand">ADMIN</p>
+        <a asp-controller="Dashboard" asp-action="Index" class="active">Tong quan</a>
+        <a asp-controller="Product" asp-action="Admin">San pham</a>
+    </aside>
+
+    <div class="admin-main reveal-on-scroll">
+        <div class="admin-header">
+            <h2>Tong quan</h2>
+            <a asp-controller="Product" asp-action="Create" class="btn-minimal">Them san pham</a>
+        </div>
+
+        @if (TempData["AdminNotice"] is string notice && !string.IsNullOrWhiteSpace(notice))
+        {
+            <div class="admin-notice">
+                @notice
+            </div>
+        }
+
+        <div class="dashboard-cards">
+            <article class="dashboard-card">
+                <p>Doanh thu</p>
+                <h3>@Model.TotalRevenue.ToString("N0") VND</h3>
+            </article>
+            <article class="dashboard-card">
+                <p>Tong don hang</p>
+                <h3>@Model.OrderCount</h3>
+            </article>
+            <article class="dashboard-card">
+                <p>Tong nguoi dung</p>
+                <h3>@Model.UserCount</h3>
+            </article>
+        </div>
+
+        <div class="dashboard-grid mt-4">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>San pham noi bat</th>
+                            <th>Luot xem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.TopViewedProducts.Any())
+                        {
+                            foreach (var p in Model.TopViewedProducts.OrderByDescending(x => x.Views))
+                            {
+                                <tr>
+                                    <td>@p.Name</td>
+                                    <td>@p.Views</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="2">Khong co du lieu</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-card dashboard-chart-card">
+                <p>Doanh thu (7 ngay gan nhat)</p>
+                <canvas id="revenueChart" height="180"></canvas>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nguoi dung</th>
+                            <th>Vai tro</th>
+                            <th>Trang thai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentUsers.Any())
+                        {
+                            foreach (var u in Model.RecentUsers)
+                            {
+                                <tr>
+                                    <td>@u.Email</td>
+                                    <td>@string.Join(", ", u.Roles)</td>
+                                    <td>@(u.IsLocked ? "Khoa" : "Hoat dong")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="3">Khong co nguoi dung</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-table-wrap mt-4">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Ma don</th>
+                        <th>Nguoi dung</th>
+                        <th>Total</th>
+                        <th>Trang thai</th>
+                        <th>Bien lai</th>
+                        <th>Thao tac</th>
+                        <th>Tao luc</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentOrders.Any())
+                    {
+                        foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@o.ShopOrderId</td>
+                                <td>
+                                    <div class="admin-user-cell">
+                                        <strong>@(!string.IsNullOrWhiteSpace(o.UserEmail) ? o.UserEmail : "Khong ro")</strong>
+                                        <small>@o.UserId</small>
+                                    </div>
+                                </td>
+                                <td>@o.TotalAmount.ToString("N0") VND</td>
+                                <td><span class="admin-order-status @StatusClass(o.Status)">@o.Status</span></td>
+                                <td>
+                                    @if (o.HasTransferProof && !string.IsNullOrWhiteSpace(o.TransferProofUrl))
+                                    {
+                                        <button type="button"
+                                                class="admin-proof-thumb-btn"
+                                                data-proof-url="http://localhost:5181@o.TransferProofUrl"
+                                                title="Xem bien lai">
+                                            <img src="http://localhost:5181@o.TransferProofUrl" alt="Proof #@o.ShopOrderId" class="admin-proof-thumb" loading="lazy" />
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-proof-none">Chua co bien lai</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (o.Status.Equals("TransferSubmitted", StringComparison.OrdinalIgnoreCase)
+                                        || o.Status.Equals("PendingTransfer", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <form asp-action="ConfirmTransfer" method="post" class="admin-inline-form">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="orderId" value="@o.ShopOrderId" />
+                                            <button type="submit" class="btn-minimal admin-btn-xs">Xac nhan da thanh toan</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7">Khong co don hang</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div id="proofModal" class="admin-proof-modal" aria-hidden="true">
+    <div class="admin-proof-dialog">
+        <button type="button" id="proofModalClose" class="admin-proof-close" aria-label="Close">&times;</button>
+        <img id="proofModalImage" src="" alt="Transfer proof" />
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function () {
+        var points = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueSeries));
+        var chartCanvas = document.getElementById('revenueChart');
+
+        if (chartCanvas && window.Chart) {
+            var labels = points.map(function (item) { return item.Date; });
+            var data = points.map(function (item) { return item.Total; });
+
+            new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: data,
+                        borderColor: '#9a6a2e',
+                        backgroundColor: 'rgba(154,106,46,0.18)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return (context.raw || 0).toLocaleString('en-US') + ' VND';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function (value) {
+                                    return Number(value).toLocaleString('en-US');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var modal = document.getElementById('proofModal');
+        var modalImg = document.getElementById('proofModalImage');
+        var closeBtn = document.getElementById('proofModalClose');
+
+        document.querySelectorAll('.admin-proof-thumb-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var src = btn.getAttribute('data-proof-url');
+                if (!src || !modal || !modalImg) return;
+                modalImg.src = src;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+            });
+        });
+
+        function closeModal() {
+            if (!modal) return;
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (modal) {
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+        }
+    })();
+</script>
+}
+

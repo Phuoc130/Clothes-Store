@@ -1,0 +1,320 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["CheckoutTitle"];
+    var initialCouponCode = (ViewBag.CouponCode as string) ?? string.Empty;
+    var initialPaymentMethod = (ViewBag.PaymentMethod as string) ?? "cod";
+}
+
+<section class="container section-space">
+    <div class="cart-page reveal-on-scroll">
+        <div class="section-header split">
+            <h2>@L["CheckoutTitle"]</h2>
+            <a asp-action="Cart" class="btn-minimal cart-continue-btn"><i class="fas fa-arrow-left"></i> @L["BackToCart"]</a>
+        </div>
+
+        <div id="checkoutLoading" class="skeleton-stack">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-block"></div>
+            <div class="skeleton-block"></div>
+        </div>
+
+        <div id="checkoutEmpty" class="empty-state" style="display:none;">
+            <i class="fas fa-shopping-bag empty-icon"></i>
+            <p>@L["CartEmpty"]</p>
+            <a asp-action="Shop" class="btn-minimal">@L["BackToShopping"]</a>
+        </div>
+
+        <div id="checkoutContent" style="display:none;">
+            <div class="checkout-layout">
+                <article class="cart-summary checkout-form-card">
+                    <h3>@L["ShippingInformation"]</h3>
+                    <div class="checkout-grid">
+                        <input id="fullName" class="checkout-input" placeholder="@L["FullName"]" />
+                        <input id="phoneNumber" class="checkout-input" placeholder="@L["PhoneNumber"]" />
+                        <input id="provinceCity" class="checkout-input" placeholder="@L["ProvinceCity"]" />
+                        <input id="district" class="checkout-input" placeholder="@L["District"]" />
+                        <input id="addressLine" class="checkout-input checkout-span-2" placeholder="@L["AddressLine"]" />
+                        <textarea id="orderNote" class="checkout-input checkout-span-2" rows="3" placeholder="@L["OrderNote"]"></textarea>
+                    </div>
+                </article>
+
+                <article class="cart-summary checkout-summary-card">
+                    <h3>@L["OrderSummary"]</h3>
+                    <ul id="checkoutItems" class="order-item-list"></ul>
+
+                    <div class="cart-total-row"><span>@L["Subtotal"]</span><span id="checkoutSubtotal">0 VND</span></div>
+                    <div class="cart-total-row"><span>@L["DiscountAmount"]</span><span id="checkoutDiscount">0 VND</span></div>
+                    <div class="cart-total-row">
+                        <span>@L["ShippingFee"]</span>
+                        <input id="shippingFee" type="number" min="0" step="1000" value="30000" class="checkout-input checkout-fee-input" />
+                    </div>
+                    <div class="cart-total-row"><strong>@L["Total"]</strong><strong id="checkoutTotal">0 VND</strong></div>
+
+                    <div class="cart-checkout-row">
+                        <input id="couponCode" type="text" value="@initialCouponCode" placeholder="@L["CouponPlaceholder"]" class="checkout-input" />
+                        <select id="paymentMethod" class="checkout-input checkout-select">
+                            <option value="cod" selected="@(string.Equals(initialPaymentMethod, "cod", StringComparison.OrdinalIgnoreCase))">@L["PaymentCashOnDelivery"]</option>
+                            <option value="bankqr" selected="@(string.Equals(initialPaymentMethod, "bankqr", StringComparison.OrdinalIgnoreCase))">@L["PaymentBankTransferQr"]</option>
+                            <option value="vnpay" selected="@(string.Equals(initialPaymentMethod, "vnpay", StringComparison.OrdinalIgnoreCase))">@L["PaymentVnPayBankQr"]</option>
+                        </select>
+                    </div>
+
+                    <p id="couponStatus" class="coupon-status" style="display:none;"></p>
+
+                    <button id="placeOrderBtn" class="btn-minimal w-100" type="button">@L["PlaceOrder"]</button>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    (function () {
+        var t = {
+            signInToViewCart: '@L["SignInToViewCart"]',
+            unableToLoadCart: '@L["UnableToLoadCart"]',
+            couponInvalid: '@L["CouponInvalid"]',
+            unableToValidateCoupon: '@L["UnableToValidateCoupon"]',
+            processing: '@L["Processing"]',
+            placeOrder: '@L["PlaceOrder"]',
+            pleaseCompleteShippingInfo: '@L["PleaseCompleteShippingInfo"]',
+            signInToPlaceOrder: '@L["SignInToPlaceOrder"]',
+            unableToPlaceOrder: '@L["UnableToPlaceOrder"]',
+            redirectingToPaymentGateway: '@L["RedirectingToPaymentGateway"]',
+            openingBankTransferQrPage: '@L["OpeningBankTransferQrPage"]',
+            connectionErrorWhilePlacingOrder: '@L["ConnectionErrorWhilePlacingOrder"]',
+            orderPlacedSuccessfully: '@L["OrderPlacedSuccessfully"]',
+            discountAppliedPrefix: '@L["DiscountAppliedPrefix"]'
+        };
+
+        var checkoutLoading = document.getElementById('checkoutLoading');
+        var checkoutEmpty = document.getElementById('checkoutEmpty');
+        var checkoutContent = document.getElementById('checkoutContent');
+        var checkoutItems = document.getElementById('checkoutItems');
+        var checkoutSubtotal = document.getElementById('checkoutSubtotal');
+        var checkoutDiscount = document.getElementById('checkoutDiscount');
+        var checkoutTotal = document.getElementById('checkoutTotal');
+        var shippingFeeInput = document.getElementById('shippingFee');
+        var couponCodeInput = document.getElementById('couponCode');
+        var couponStatus = document.getElementById('couponStatus');
+        var paymentMethodInput = document.getElementById('paymentMethod');
+        var placeOrderBtn = document.getElementById('placeOrderBtn');
+
+        var fullNameInput = document.getElementById('fullName');
+        var phoneInput = document.getElementById('phoneNumber');
+        var provinceInput = document.getElementById('provinceCity');
+        var districtInput = document.getElementById('district');
+        var addressInput = document.getElementById('addressLine');
+        var noteInput = document.getElementById('orderNote');
+
+        var cartItems = [];
+        var subtotalValue = 0;
+        var discountPercent = 0;
+
+        function money(v) {
+            return Number(v || 0).toLocaleString('en-US') + ' VND';
+        }
+
+        function readShippingFee() {
+            var fee = Number(shippingFeeInput ? shippingFeeInput.value : 0);
+            return Math.max(0, fee || 0);
+        }
+
+        function updateTotals() {
+            var discountValue = Math.round(subtotalValue * discountPercent / 100);
+            var totalValue = Math.max(0, subtotalValue - discountValue + readShippingFee());
+            checkoutSubtotal.textContent = money(subtotalValue);
+            checkoutDiscount.textContent = money(discountValue);
+            checkoutTotal.textContent = money(totalValue);
+            return { discountValue: discountValue, totalValue: totalValue };
+        }
+
+        function renderItems(items) {
+            checkoutItems.innerHTML = items.map(function (item) {
+                return '<li>' + item.productName + ' x ' + item.quantity + ' - ' + money(item.price) + '</li>';
+            }).join('');
+        }
+
+        function renderCouponStatus(isOk, message) {
+            if (!message) {
+                couponStatus.style.display = 'none';
+                couponStatus.textContent = '';
+                couponStatus.className = 'coupon-status';
+                return;
+            }
+
+            couponStatus.style.display = 'block';
+            couponStatus.textContent = message;
+            couponStatus.className = isOk ? 'coupon-status is-success' : 'coupon-status is-error';
+        }
+
+        function validateCoupon(code) {
+            if (!code) {
+                discountPercent = 0;
+                renderCouponStatus(false, '');
+                updateTotals();
+                return;
+            }
+
+            fetch('/Product/ValidateCoupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ couponCode: code })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.valid) {
+                        discountPercent = Number(data.discountPercent || 0);
+                        renderCouponStatus(true, data.message + ' - ' + discountPercent + '%');
+                    } else {
+                        discountPercent = 0;
+                        renderCouponStatus(false, data.message || t.couponInvalid);
+                    }
+
+                    updateTotals();
+                })
+                .catch(function () {
+                    discountPercent = 0;
+                    renderCouponStatus(false, t.unableToValidateCoupon);
+                    updateTotals();
+                });
+        }
+
+        function setCheckoutLoading(isLoading) {
+            placeOrderBtn.disabled = isLoading;
+            placeOrderBtn.textContent = isLoading ? t.processing : t.placeOrder;
+        }
+
+        function loadCart() {
+            fetch('/Product/GetCartItems')
+                .then(function (resp) { return resp.json(); })
+                .then(function (data) {
+                    checkoutLoading.style.display = 'none';
+
+                    if (data.requireLogin) {
+                        checkoutEmpty.style.display = 'flex';
+                        checkoutEmpty.querySelector('p').textContent = t.signInToViewCart;
+                        return;
+                    }
+
+                    var items = Array.isArray(data) ? data : (data.items || []);
+                    if (!items.length) {
+                        checkoutEmpty.style.display = 'flex';
+                        checkoutContent.style.display = 'none';
+                        return;
+                    }
+
+                    cartItems = items;
+                    subtotalValue = items.reduce(function (sum, item) {
+                        return sum + Number(item.price || 0) * Number(item.quantity || 0);
+                    }, 0);
+
+                    renderItems(items);
+                    updateTotals();
+                    checkoutContent.style.display = 'block';
+                    checkoutEmpty.style.display = 'none';
+
+                    if (couponCodeInput && couponCodeInput.value.trim()) {
+                        validateCoupon(couponCodeInput.value.trim());
+                    }
+                })
+                .catch(function () {
+                    checkoutLoading.style.display = 'none';
+                    checkoutEmpty.style.display = 'flex';
+                    checkoutEmpty.querySelector('p').textContent = t.unableToLoadCart;
+                });
+        }
+
+        function checkout() {
+            var fullName = (fullNameInput.value || '').trim();
+            var phoneNumber = (phoneInput.value || '').trim();
+            var provinceCity = (provinceInput.value || '').trim();
+            var district = (districtInput.value || '').trim();
+            var addressLine = (addressInput.value || '').trim();
+            var orderNote = (noteInput.value || '').trim();
+
+            if (!fullName || !phoneNumber || !provinceCity || !district || !addressLine) {
+                if (window.showToast) window.showToast(t.pleaseCompleteShippingInfo, 'warning');
+                return;
+            }
+
+            setCheckoutLoading(true);
+            var couponCode = couponCodeInput ? couponCodeInput.value.trim() : '';
+            var paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'cod';
+            var shippingFee = readShippingFee();
+
+            var url = '/Product/Checkout?paymentMethod=' + encodeURIComponent(paymentMethod)
+                + '&fullName=' + encodeURIComponent(fullName)
+                + '&phoneNumber=' + encodeURIComponent(phoneNumber)
+                + '&provinceCity=' + encodeURIComponent(provinceCity)
+                + '&district=' + encodeURIComponent(district)
+                + '&addressLine=' + encodeURIComponent(addressLine)
+                + '&shippingFee=' + encodeURIComponent(shippingFee);
+
+            if (couponCode) url += '&couponCode=' + encodeURIComponent(couponCode);
+            if (orderNote) url += '&orderNote=' + encodeURIComponent(orderNote);
+
+            fetch(url, { method: 'POST' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.requireLogin) {
+                        if (window.showToast) window.showToast(t.signInToPlaceOrder, 'error');
+                        return;
+                    }
+
+                    if (!data.success) {
+                        if (window.showToast) window.showToast(data.message || t.unableToPlaceOrder, 'error');
+                        return;
+                    }
+
+                    if (data.paymentRequired && data.paymentMethod === 'vnpay' && data.paymentUrl) {
+                        if (window.showToast) window.showToast(t.redirectingToPaymentGateway, 'success');
+                        window.location.href = data.paymentUrl;
+                        return;
+                    }
+
+                    if (data.paymentRequired && data.paymentMethod === 'bankqr' && data.clientRedirectUrl) {
+                        if (window.showToast) window.showToast(t.openingBankTransferQrPage, 'success');
+                        window.location.href = data.clientRedirectUrl;
+                        return;
+                    }
+
+                    if (window.showToast) {
+                        window.showToast((data.message || t.orderPlacedSuccessfully) + ' - Order: #' + data.orderId, 'success');
+                    }
+                    setTimeout(function () {
+                        window.location.href = '/Product/OrderSuccess?orderId=' + encodeURIComponent(data.orderId);
+                    }, 400);
+                })
+                .catch(function () {
+                    if (window.showToast) window.showToast(t.connectionErrorWhilePlacingOrder, 'error');
+                })
+                .finally(function () {
+                    setCheckoutLoading(false);
+                });
+        }
+
+        if (couponCodeInput) {
+            var couponTimer = null;
+            couponCodeInput.addEventListener('input', function () {
+                if (couponTimer) clearTimeout(couponTimer);
+                var code = couponCodeInput.value.trim();
+                couponTimer = setTimeout(function () {
+                    validateCoupon(code);
+                }, 350);
+            });
+        }
+
+        if (shippingFeeInput) {
+            shippingFeeInput.addEventListener('input', updateTotals);
+        }
+
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener('click', checkout);
+        }
+
+        loadCart();
+    })();
+</script>
+}

@@ -1,0 +1,39 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserWeb.SharedResource> L
+@{
+    ViewData["Title"] = L["Register"];
+}
+
+<section class="container section-space">
+    <div class="auth-shell reveal-on-scroll">
+        <div class="admin-form auth-card">
+            <h2>@L["CreateAccount"]</h2>
+            <p class="auth-subtitle">@L["RegisterSubtitle"]</p>
+
+            <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label>@L["Email"]</label>
+                    <input name="email" class="form-control" type="email" required />
+                </div>
+
+                <div class="form-group">
+                    <label>@L["Password"]</label>
+                    <input name="password" class="form-control" type="password" required />
+                </div>
+
+                <div class="form-group">
+                    <label>@L["ConfirmPassword"]</label>
+                    <input name="confirmPassword" class="form-control" type="password" required />
+                </div>
+
+                <div class="admin-actions auth-actions">
+                    <button type="submit" class="btn-minimal">@L["Register"]</button>
+                    <a asp-action="Login" class="btn-minimal">@L["BackToLogin"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+

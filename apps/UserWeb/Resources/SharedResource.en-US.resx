@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="BrandName" xml:space="preserve"><value>AURELIA ATELIER</value></data>
+  <data name="Men" xml:space="preserve"><value>Men</value></data>
+  <data name="Women" xml:space="preserve"><value>Women</value></data>
+  <data name="Collection" xml:space="preserve"><value>Collection</value></data>
+  <data name="Sale" xml:space="preserve"><value>Sale</value></data>
+  <data name="MenPicks" xml:space="preserve"><value>Men Picks</value></data>
+  <data name="WomenPicks" xml:space="preserve"><value>Women Picks</value></data>
+  <data name="StyleNotes" xml:space="preserve"><value>Style Notes</value></data>
+  <data name="Editorial" xml:space="preserve"><value>Editorial</value></data>
+  <data name="Shirts" xml:space="preserve"><value>Shirts</value></data>
+  <data name="Pants" xml:space="preserve"><value>Pants</value></data>
+  <data name="Jackets" xml:space="preserve"><value>Jackets</value></data>
+  <data name="Dresses" xml:space="preserve"><value>Dresses</value></data>
+  <data name="Tops" xml:space="preserve"><value>Tops</value></data>
+  <data name="Skirts" xml:space="preserve"><value>Skirts</value></data>
+  <data name="MenStyleNoteText" xml:space="preserve"><value>Minimal tailoring with breathable textures for modern city life.</value></data>
+  <data name="WomenStyleNoteText" xml:space="preserve"><value>Soft silhouettes, modern details, and timeless neutral palettes.</value></data>
+  <data name="SearchProduct" xml:space="preserve"><value>Search products...</value></data>
+  <data name="SwitchTheme" xml:space="preserve"><value>Switch color theme</value></data>
+  <data name="Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="LanguageVietnamese" xml:space="preserve"><value>Vietnamese</value></data>
+  <data name="LanguageEnglish" xml:space="preserve"><value>English</value></data>
+  <data name="Cart" xml:space="preserve"><value>Cart</value></data>
+  <data name="MyOrders" xml:space="preserve"><value>My orders</value></data>
+  <data name="Wishlist" xml:space="preserve"><value>Wishlist</value></data>
+  <data name="Logout" xml:space="preserve"><value>Logout</value></data>
+  <data name="Login" xml:space="preserve"><value>Login</value></data>
+  <data name="Register" xml:space="preserve"><value>Register</value></data>
+  <data name="AdminSite" xml:space="preserve"><value>Admin site</value></data>
+  <data name="QuickCart" xml:space="preserve"><value>Quick cart</value></data>
+  <data name="LoadingCart" xml:space="preserve"><value>Loading cart...</value></data>
+  <data name="ViewFullCart" xml:space="preserve"><value>View full cart</value></data>
+  <data name="About" xml:space="preserve"><value>About</value></data>
+  <data name="Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="PrivacyPolicy" xml:space="preserve"><value>Privacy policy</value></data>
+  <data name="ReturnPolicy" xml:space="preserve"><value>Return policy</value></data>
+  <data name="Payments" xml:space="preserve"><value>Payments</value></data>
+
+  <data name="ShopTitle" xml:space="preserve"><value>Shop</value></data>
+  <data name="SearchName" xml:space="preserve"><value>Search</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Enter product name...</value></data>
+  <data name="Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Category" xml:space="preserve"><value>Category</value></data>
+  <data name="All" xml:space="preserve"><value>All</value></data>
+  <data name="Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Min" xml:space="preserve"><value>Min</value></data>
+  <data name="Max" xml:space="preserve"><value>Max</value></data>
+  <data name="Color" xml:space="preserve"><value>Color</value></data>
+  <data name="Sort" xml:space="preserve"><value>Sort</value></data>
+  <data name="Newest" xml:space="preserve"><value>Newest</value></data>
+  <data name="PriceLowToHigh" xml:space="preserve"><value>Price low to high</value></data>
+  <data name="PriceHighToLow" xml:space="preserve"><value>Price high to low</value></data>
+  <data name="ApplyFilters" xml:space="preserve"><value>Apply filters</value></data>
+  <data name="Products" xml:space="preserve"><value>Products</value></data>
+  <data name="ShowingProductsFormat" xml:space="preserve"><value>Showing {0} of {1} products</value></data>
+  <data name="Items" xml:space="preserve"><value>items</value></data>
+  <data name="NoMatchingProducts" xml:space="preserve"><value>Sorry, we could not find products matching your filters.</value></data>
+  <data name="QuickView" xml:space="preserve"><value>Quick view</value></data>
+  <data name="AddToWishlist" xml:space="preserve"><value>Add to wishlist</value></data>
+  <data name="AddToCart" xml:space="preserve"><value>Add to Cart</value></data>
+  <data name="FilteringProducts" xml:space="preserve"><value>Filtering products...</value></data>
+  <data name="LoadMore" xml:space="preserve"><value>Load more</value></data>
+  <data name="FiltersUpdated" xml:space="preserve"><value>Product list updated.</value></data>
+  <data name="FilterLoadFailed" xml:space="preserve"><value>Could not load filtered data.</value></data>
+  <data name="ServerConnectFailed" xml:space="preserve"><value>Could not connect to server.</value></data>
+  <data name="FiltersCleared" xml:space="preserve"><value>Filters cleared.</value></data>
+  <data name="clothesstore" xml:space="preserve"><value>Clothes Store</value></data>
+  <data name="HomeHeroEyebrow" xml:space="preserve"><value>New Collection</value></data>
+  <data name="HomeHeroTitle" xml:space="preserve"><value>Spring 2026</value></data>
+  <data name="HomeShopNow" xml:space="preserve"><value>Shop Now</value></data>
+  <data name="HomeDiscover" xml:space="preserve"><value>Discover</value></data>
+  <data name="HomeDiscoverAria" xml:space="preserve"><value>Scroll to shop section</value></data>
+  <data name="HomeCategories" xml:space="preserve"><value>Categories</value></data>
+  <data name="HomeMenCollectionAlt" xml:space="preserve"><value>Men collection</value></data>
+  <data name="HomeWomenCollectionAlt" xml:space="preserve"><value>Women collection</value></data>
+  <data name="HomeAccessoriesCollectionAlt" xml:space="preserve"><value>Accessories collection</value></data>
+  <data name="HomeShopMen" xml:space="preserve"><value>Shop Men</value></data>
+  <data name="HomeShopWomen" xml:space="preserve"><value>Shop Women</value></data>
+  <data name="HomeShopAccessories" xml:space="preserve"><value>Shop Accessories</value></data>
+  <data name="HomeFeaturedProducts" xml:space="preserve"><value>Featured Products</value></data>
+  <data name="HomeViewAll" xml:space="preserve"><value>View All</value></data>
+  <data name="HomeNoFeaturedProducts" xml:space="preserve"><value>No featured products available.</value></data>
+  <data name="HomeClientNotes" xml:space="preserve"><value>Client Notes</value></data>
+  <data name="HomeRealBuyerReviews" xml:space="preserve"><value>Real buyer reviews</value></data>
+  <data name="HomeTestimonial1" xml:space="preserve"><value>Elegant fit, premium fabric, and the real product is even better than photos.</value></data>
+  <data name="HomeTestimonial1Author" xml:space="preserve"><value>Lan Anh - Ho Chi Minh City</value></data>
+  <data name="HomeTestimonial2" xml:space="preserve"><value>This is my third order. Fast delivery, true-to-size, and super smooth checkout.</value></data>
+  <data name="HomeTestimonial2Author" xml:space="preserve"><value>Minh Quan - Hanoi</value></data>
+  <data name="HomeTestimonial3" xml:space="preserve"><value>Perfect for both office and weekends. I especially love the neutral tones.</value></data>
+  <data name="HomeTestimonial3Author" xml:space="preserve"><value>Thu Ha - Da Nang</value></data>
+  <data name="HomeTestimonialPaginationAria" xml:space="preserve"><value>Testimonial slider pagination</value></data>
+  <data name="HomeInstagramLooks" xml:space="preserve"><value>Instagram Looks</value></data>
+  <data name="HomeInstagramAlt1" xml:space="preserve"><value>Instagram look 1</value></data>
+  <data name="HomeInstagramAlt2" xml:space="preserve"><value>Instagram look 2</value></data>
+  <data name="HomeInstagramAlt3" xml:space="preserve"><value>Instagram look 3</value></data>
+  <data name="HomeInstagramAlt4" xml:space="preserve"><value>Instagram look 4</value></data>
+  <data name="HomeNewsletterTitle" xml:space="preserve"><value>Join Our Private List</value></data>
+  <data name="HomeNewsletterSubtitle" xml:space="preserve"><value>Subscribe to get exclusive offers and 10% off your first order.</value></data>
+  <data name="HomeNewsletterToast" xml:space="preserve"><value>Subscribed successfully - check your email for your discount code!</value></data>
+  <data name="HomeNewsletterPlaceholder" xml:space="preserve"><value>Enter your email</value></data>
+  <data name="HomeNewsletterButton" xml:space="preserve"><value>Get Offer</value></data>
+  <data name="HomeCampaignLabel" xml:space="preserve"><value>Minimal Collection</value></data>
+  <data name="HomeExplore" xml:space="preserve"><value>Explore</value></data>
+  <data name="HomeBrandStoryTitle" xml:space="preserve"><value>Brand Story</value></data>
+  <data name="HomeBrandStoryText" xml:space="preserve"><value>We create minimal fashion for modern lifestyle. Each silhouette is crafted for clarity, comfort, and everyday elegance.</value></data>
+  <data name="HomeOpenAdminConsole" xml:space="preserve"><value>Open Admin Console</value></data>
+  <data name="CartPageTitle" xml:space="preserve"><value>Your Cart</value></data>
+  <data name="ContinueShopping" xml:space="preserve"><value>Continue Shopping</value></data>
+  <data name="CartEmpty" xml:space="preserve"><value>Your cart is empty</value></data>
+  <data name="BackToShopping" xml:space="preserve"><value>Back to Shopping</value></data>
+  <data name="Product" xml:space="preserve"><value>Product</value></data>
+  <data name="UnitPrice" xml:space="preserve"><value>Unit Price</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Quantity</value></data>
+  <data name="Subtotal" xml:space="preserve"><value>Subtotal</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="CouponPlaceholder" xml:space="preserve"><value>Coupon code (e.g. WELCOME10)</value></data>
+  <data name="PaymentCashOnDelivery" xml:space="preserve"><value>Cash on Delivery</value></data>
+  <data name="PaymentBankTransferQr" xml:space="preserve"><value>Bank Transfer (VietQR)</value></data>
+  <data name="PaymentVnPayBankQr" xml:space="preserve"><value>VNPay (Bank/QR)</value></data>
+  <data name="PlaceOrder" xml:space="preserve"><value>Place Order</value></data>
+  <data name="ProceedToCheckout" xml:space="preserve"><value>Proceed to Checkout</value></data>
+  <data name="CheckoutTitle" xml:space="preserve"><value>Checkout</value></data>
+  <data name="ShippingInformation" xml:space="preserve"><value>Shipping Information</value></data>
+  <data name="FullName" xml:space="preserve"><value>Full Name</value></data>
+  <data name="PhoneNumber" xml:space="preserve"><value>Phone Number</value></data>
+  <data name="ProvinceCity" xml:space="preserve"><value>Province/City</value></data>
+  <data name="District" xml:space="preserve"><value>District</value></data>
+  <data name="AddressLine" xml:space="preserve"><value>Street Address</value></data>
+  <data name="OrderNote" xml:space="preserve"><value>Order Note</value></data>
+  <data name="OrderSummary" xml:space="preserve"><value>Order Summary</value></data>
+  <data name="DiscountAmount" xml:space="preserve"><value>Discount</value></data>
+  <data name="ShippingFee" xml:space="preserve"><value>Shipping Fee</value></data>
+  <data name="PleaseCompleteShippingInfo" xml:space="preserve"><value>Please complete shipping information</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Pay Now</value></data>
+  <data name="RedirectingToCartForCheckout" xml:space="preserve"><value>Redirecting to cart for checkout...</value></data>
+  <data name="TryCodes" xml:space="preserve"><value>Try codes: WELCOME10, SALE15, VIP20</value></data>
+  <data name="OrderTotal" xml:space="preserve"><value>Order Total</value></data>
+  <data name="SignInToViewCart" xml:space="preserve"><value>Please sign in to view your cart</value></data>
+  <data name="UnableToLoadCart" xml:space="preserve"><value>Unable to load cart</value></data>
+  <data name="Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="CouponInvalid" xml:space="preserve"><value>Coupon code does not exist or has expired</value></data>
+  <data name="UnableToValidateCoupon" xml:space="preserve"><value>Unable to validate coupon code</value></data>
+  <data name="Processing" xml:space="preserve"><value>Processing...</value></data>
+  <data name="MinimumQtyInfo" xml:space="preserve"><value>Minimum quantity is 1. Use remove to delete the item.</value></data>
+  <data name="UpdateFailed" xml:space="preserve"><value>Update failed</value></data>
+  <data name="RemovedFromCart" xml:space="preserve"><value>Removed from cart</value></data>
+  <data name="DeleteFailed" xml:space="preserve"><value>Delete failed</value></data>
+  <data name="SignInToPlaceOrder" xml:space="preserve"><value>Please sign in to place an order</value></data>
+  <data name="UnableToPlaceOrder" xml:space="preserve"><value>Unable to place order</value></data>
+  <data name="RedirectingToPaymentGateway" xml:space="preserve"><value>Redirecting to payment gateway...</value></data>
+  <data name="OpeningBankTransferQrPage" xml:space="preserve"><value>Opening bank transfer QR page...</value></data>
+  <data name="DiscountAppliedPrefix" xml:space="preserve"><value>Applied successfully - Discount</value></data>
+  <data name="OrderPlacedSuccessfully" xml:space="preserve"><value>Order placed successfully</value></data>
+  <data name="ConnectionErrorWhilePlacingOrder" xml:space="preserve"><value>Connection error while placing order</value></data>
+  <data name="Thumbnail" xml:space="preserve"><value>Thumbnail</value></data>
+  <data name="YouMayAlsoLike" xml:space="preserve"><value>You may also like</value></data>
+  <data name="BackToShop" xml:space="preserve"><value>Back to Shop</value></data>
+  <data name="PleaseSelectSizeBeforeAddingToCart" xml:space="preserve"><value>Please select a size before adding to cart</value></data>
+  <data name="PleaseSelectSizeFirst" xml:space="preserve"><value>Please select a size first</value></data>
+  <data name="YouHaveNoOrdersYet" xml:space="preserve"><value>You have no orders yet</value></data>
+  <data name="ShopNow" xml:space="preserve"><value>Shop Now</value></data>
+  <data name="CancelOrder" xml:space="preserve"><value>Cancel Order</value></data>
+  <data name="UploadReceipt" xml:space="preserve"><value>Upload Receipt</value></data>
+  <data name="RepayWithVnPay" xml:space="preserve"><value>Repay with VNPay</value></data>
+  <data name="RepayViaQr" xml:space="preserve"><value>Repay via QR</value></data>
+  <data name="ViewReceipt" xml:space="preserve"><value>View Receipt</value></data>
+  <data name="OrderPrefix" xml:space="preserve"><value>Order</value></data>
+  <data name="Created" xml:space="preserve"><value>Created</value></data>
+  <data name="SignInToViewOrders" xml:space="preserve"><value>Please sign in to view your orders</value></data>
+  <data name="UnableToLoadOrders" xml:space="preserve"><value>Unable to load orders</value></data>
+  <data name="Cancelling" xml:space="preserve"><value>Cancelling...</value></data>
+  <data name="UnableToCancelOrder" xml:space="preserve"><value>Unable to cancel order</value></data>
+  <data name="OrderCancelled" xml:space="preserve"><value>Order cancelled</value></data>
+  <data name="OrderCancellationFailed" xml:space="preserve"><value>Order cancellation failed</value></data>
+  <data name="UnableToRetryPayment" xml:space="preserve"><value>Unable to retry payment</value></data>
+  <data name="RepaymentFailed" xml:space="preserve"><value>Repayment failed</value></data>
+  <data name="UploadingReceipt" xml:space="preserve"><value>Uploading receipt...</value></data>
+  <data name="UnableToUploadReceipt" xml:space="preserve"><value>Unable to upload receipt</value></data>
+  <data name="ReceiptUploaded" xml:space="preserve"><value>Receipt uploaded</value></data>
+  <data name="ReceiptUploadFailed" xml:space="preserve"><value>Receipt upload failed</value></data>
+  <data name="StatusPending" xml:space="preserve"><value>Pending</value></data>
+  <data name="StatusPendingPayment" xml:space="preserve"><value>Pending Payment</value></data>
+  <data name="StatusPendingTransfer" xml:space="preserve"><value>Pending Transfer</value></data>
+  <data name="StatusTransferSubmitted" xml:space="preserve"><value>Transfer Submitted</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Paid</value></data>
+  <data name="StatusPaymentFailed" xml:space="preserve"><value>Payment Failed</value></data>
+  <data name="StatusShipping" xml:space="preserve"><value>Shipping</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="WishlistItems" xml:space="preserve"><value>Wishlist Items</value></data>
+  <data name="NoWishlistItemsYet" xml:space="preserve"><value>No wishlist items yet</value></data>
+  <data name="ExploreProducts" xml:space="preserve"><value>Explore Products</value></data>
+  <data name="SignInToViewWishlist" xml:space="preserve"><value>Please sign in to view your wishlist</value></data>
+  <data name="UnableToLoadWishlist" xml:space="preserve"><value>Unable to load wishlist</value></data>
+  <data name="RemoveFromWishlist" xml:space="preserve"><value>Remove from wishlist</value></data>
+  <data name="BankTransferPayment" xml:space="preserve"><value>Bank Transfer Payment</value></data>
+  <data name="OrderId" xml:space="preserve"><value>Order ID</value></data>
+  <data name="Bank" xml:space="preserve"><value>Bank</value></data>
+  <data name="AccountNumber" xml:space="preserve"><value>Account Number</value></data>
+  <data name="AccountName" xml:space="preserve"><value>Account Name</value></data>
+  <data name="TransferNote" xml:space="preserve"><value>Transfer Note</value></data>
+  <data name="CopyAccountNumber" xml:space="preserve"><value>Copy Account Number</value></data>
+  <data name="CopyTransferNote" xml:space="preserve"><value>Copy Transfer Note</value></data>
+  <data name="ScanQrToPay" xml:space="preserve"><value>Scan the QR code below with your banking app to complete payment:</value></data>
+  <data name="VietQrPayment" xml:space="preserve"><value>VietQR payment</value></data>
+  <data name="CouldNotGenerateQr" xml:space="preserve"><value>Could not generate QR code. Please return to cart and try again.</value></data>
+  <data name="UploadReceiptImageRecommended" xml:space="preserve"><value>Upload receipt image (recommended)</value></data>
+  <data name="DragDropReceiptHere" xml:space="preserve"><value>Drag and drop your receipt here</value></data>
+  <data name="OrClickChooseImage" xml:space="preserve"><value>or click to choose an image</value></data>
+  <data name="NoFileSelected" xml:space="preserve"><value>No file selected</value></data>
+  <data name="IHaveTransferred" xml:space="preserve"><value>I Have Transferred</value></data>
+  <data name="BackToCart" xml:space="preserve"><value>Back to Cart</value></data>
+  <data name="ConfirmationSuccessful" xml:space="preserve"><value>Confirmation Successful</value></data>
+  <data name="TransferReceivedConfirmSoon" xml:space="preserve"><value>We have received your transfer details. Your order will be confirmed shortly.</value></data>
+  <data name="ViewMyOrders" xml:space="preserve"><value>View My Orders</value></data>
+  <data name="UnableToCopy" xml:space="preserve"><value>Unable to copy</value></data>
+  <data name="AccountNumberCopied" xml:space="preserve"><value>Account number copied</value></data>
+  <data name="TransferNoteCopied" xml:space="preserve"><value>Transfer note copied</value></data>
+  <data name="UnableToSubmitConfirmation" xml:space="preserve"><value>Unable to submit confirmation</value></data>
+  <data name="TransferConfirmationSubmitted" xml:space="preserve"><value>Transfer confirmation submitted</value></data>
+  <data name="VerifyingTransfer" xml:space="preserve"><value>Verifying transfer...</value></data>
+  <data name="CopiedSuccessfully" xml:space="preserve"><value>Copied!</value></data>
+  <data name="ConnectionError" xml:space="preserve"><value>Connection error</value></data>
+  <data name="ThankYouForYourPurchase" xml:space="preserve"><value>Thank you for your purchase. We received your transfer confirmation and will process your order shortly.</value></data>
+  <data name="PaymentResult" xml:space="preserve"><value>Payment Result</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="NoTransactionInfo" xml:space="preserve"><value>No transaction information available</value></data>
+  <data name="PaymentSuccessful" xml:space="preserve"><value>Payment Successful</value></data>
+  <data name="PaymentUnsuccessful" xml:space="preserve"><value>Payment Unsuccessful</value></data>
+  <data name="TryPayAgain" xml:space="preserve"><value>Try Pay Again</value></data>
+  <data name="OrderSuccessTitle" xml:space="preserve"><value>Order Placed Successfully</value></data>
+  <data name="OrderSuccessMessage" xml:space="preserve"><value>Your order has been recorded. We will process and deliver it as soon as possible.</value></data>
+  <data name="OrderTimelinePlaced" xml:space="preserve"><value>Ordered</value></data>
+  <data name="OrderTimelinePendingPayment" xml:space="preserve"><value>Waiting Payment</value></data>
+  <data name="OrderTimelineProcessing" xml:space="preserve"><value>Processing</value></data>
+  <data name="OrderTimelineShipping" xml:space="preserve"><value>Shipping</value></data>
+  <data name="OrderTimelineCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Message" xml:space="preserve"><value>Message</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>N/A</value></data>
+  <data name="LoginSubtitle" xml:space="preserve"><value>Sign in to track your orders and check out faster.</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Password" xml:space="preserve"><value>Password</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Create Account</value></data>
+  <data name="RegisterSubtitle" xml:space="preserve"><value>Create an account to save your cart and manage your orders.</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Confirm Password</value></data>
+  <data name="BackToLogin" xml:space="preserve"><value>Back to Login</value></data>
+  <data name="Hot" xml:space="preserve"><value>Hot</value></data>
+  <data name="Account" xml:space="preserve"><value>Account</value></data>
+</root>
